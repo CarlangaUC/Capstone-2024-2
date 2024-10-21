@@ -1,0 +1,15 @@
+3
+4
+3
+0
+Barco|Juanin|2|Lays,,|Puerto|Abayarde|1|
+,,,
+,|Barco|Titanic|1|Abayarde|
+1
+,,|Puerto|Abayarde|1|
+|Barco|Juanin|2|Lays,,|Barco|Titanic|1|Abayarde|
+,,,
+2
+,,|Puerto|Abayarde|1|Titanic|
+,,, 
+|Barco|Juanin|2|Lays,,|
