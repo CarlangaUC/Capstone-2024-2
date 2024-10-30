@@ -5,26 +5,15 @@ UNIT_TIME = 1
 class Ship:
     ship_id = 0
 
-    def __init__(self, env, name, speed, port):
+    def __init__(self, env, name, speed, port_id):
         self.env = env
         self.name = name
         self.speed = speed
-        self.port = port
+        self.port_id = port_id
         self.ship_id = Ship.ship_id
         self.pos = 0
-        self.route = None
+        self.route = -1
         Ship.ship_id += 1
-
-    def drive(self, route):
-        if route.initial_port != self.port:
-            yield self.env.timeout(0)
-        else:
-            self.route = route
-            while self.pos < route.dist:
-                print(f"{self.name}, ruta {route.route_id}, posicion: {self.pos}, tiempo simulacion {self.env.now}")
-                self.pos += self.speed
-                yield self.env.timeout(UNIT_TIME)
-            route.final_port.ships.append(self)
 
 
 class Port:
@@ -40,10 +29,10 @@ class Port:
 class Route:
     route_id = 0
 
-    def __init__(self, env, initial_port, final_port, dist):
+    def __init__(self, env, initial_port_id, final_port_id, dist):
         self.env = env
-        self.initial_port = initial_port
-        self.final_port = final_port
+        self.initial_port_id = initial_port_id
+        self.final_port_id = final_port_id
         self.dist = dist
         self.route_id = Route.route_id
         Route.route_id += 1
@@ -57,6 +46,23 @@ class Manager:
         self.ports = {}
         self.routes = {}
 
+    def drive(self, ship_id, route_id):
+        route = self.routes[route_id]
+        ship = self.ships[ship_id]
+        final_port = self.ports[route.final_port_id]
+        if route.initial_port_id != ship.port_id:
+            yield self.env.timeout(0)
+        else:
+            ship.route_id = route_id
+            while ship.pos < route.dist:
+                print(f"{ship.name}, ruta {ship.route_id}, posicion: {ship.pos}, "
+                      f"tiempo simulacion {ship.env.now}")
+                ship.pos += ship.speed
+                yield ship.env.timeout(UNIT_TIME)
+            final_port.ships.append(ship_id)
+
+    # estas funciones generator son solo una forma "elegante" de cargar los
+    # archivos .txt como instancias
     def ports_generator(self, ports_file):
         with open(ports_file) as file:
             for line in file:
@@ -68,15 +74,15 @@ class Manager:
         with open(routes_file) as file:
             for line in file:
                 data = line.strip().split(";")
-                yield Route(self.env, self.ports[int(data[0])],
-                            self.ports[int(data[1])], int(data[2]))
+                yield Route(self.env, int(data[0]),
+                            int(data[1]), int(data[2]))
 
     def ships_generator(self, ships_file):
         with open(ships_file) as file:
             for line in file:
                 data = line.strip().split(";")
                 yield Ship(self.env, data[0], float(data[1]),
-                           self.ports[int(data[2])])
+                           int(data[2]))
 
     def add_ports(self, ports_file):
         for port in self.ports_generator(ports_file):
@@ -96,8 +102,8 @@ class Manager:
         self.add_ships(ships_file)
 
     def processes(self, routes_id):
-        for ship, route_id in zip(self.ships.values(), routes_id):
-            self.env.process(ship.drive(self.routes[route_id]))
+        for ship_id, route_id in zip(self.ships, routes_id):
+            self.env.process(self.drive(ship_id, route_id))
 
     def run(self, until):
         self.env.run(until=until)
