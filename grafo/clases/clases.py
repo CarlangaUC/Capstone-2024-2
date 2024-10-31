@@ -37,6 +37,7 @@ class Route:
         self.final_port_id = final_port_id
         self.dist = dist
         self.route_id = Route.route_id
+        self.ships = []
         Route.route_id += 1
 
 
@@ -56,11 +57,13 @@ class Manager:
             yield self.env.timeout(0)
         else:
             ship.route_id = route_id
+            route.ships.append(ship_id)
             while ship.pos < route.dist:
                 print(f"{ship.name}, ruta {ship.route_id}, posicion: {ship.pos}, "
                       f"tiempo simulacion {ship.env.now}")
                 ship.pos += ship.speed
                 yield ship.env.timeout(UNIT_TIME)
+            route.ships.remove(ship_id)
             final_port.ships.append(ship_id)
 
     # estas funciones generator son solo una forma "elegante" de cargar los
