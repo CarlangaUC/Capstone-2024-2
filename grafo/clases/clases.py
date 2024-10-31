@@ -24,6 +24,8 @@ class Port:
         self.capacity = capacity
         self.port_id = port_id
         self.ships = []
+        # IDEA: el puerto podría tener un resource que sea algo
+        # como "operadores" o "gruas" para modelar la capacidad
 
 
 class Route:
