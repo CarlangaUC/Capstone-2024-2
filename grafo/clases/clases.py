@@ -12,7 +12,7 @@ class Ship:
         self.port_id = port_id
         self.ship_id = Ship.ship_id
         self.pos = 0
-        self.route = -1
+        self.route_id = -1
         Ship.ship_id += 1
 
 
