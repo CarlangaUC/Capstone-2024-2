@@ -1,0 +1,25 @@
+t=0
+port;shangai;[30.62714873184947, 122.06310305027806];True;p1
+port;rotterdam;[51.94974625239741, 4.145284454152448];False;p2
+ship;Barco A;0.0;shangai;rotterdam;s1;r1
+routes;p1;p2;r1
+t=1
+ship;Barco A;0.02;shangai;rotterdam;s1;r1
+t=2
+ship;Barco A;0.04;shangai;rotterdam;s1;r1
+t=3
+ship;Barco A;0.06;shangai;rotterdam;s1;r1
+t=4
+ship;Barco A;0.08;shangai;rotterdam;s1;r1
+t=5
+ship;Barco A;0.1;shangai;rotterdam;s1;r1
+t=6
+ship;Barco A;0.12;shangai;rotterdam;s1;r1
+t=7
+ship;Barco A;0.14;shangai;rotterdam;s1;r1
+t=8
+ship;Barco A;0.16;shangai;rotterdam;s1;r1
+t=9
+ship;Barco A;0.18;shangai;rotterdam;s1;r1
+t=10
+ship;Barco A;0.20;shangai;rotterdam;s1;r1
