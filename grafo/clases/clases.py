@@ -1,3 +1,4 @@
+import numpy as np
 import simpy
 UNIT_TIME = 1
 
@@ -90,12 +91,14 @@ class Manager:
                            int(data[2]))
 
     def add_ports(self, ports_file):
-        for port in self.ports_generator(ports_file):
+        for i, port in enumerate(self.ports_generator(ports_file)):
             self.ports[port.port_id] = port
+        self.matrix = np.zeros((i + 1, i + 1))
 
     def add_routes(self, routes_file):
         for route in self.routes_generator(routes_file):
             self.routes[route.route_id] = route
+            self.matrix[route.initial_port_id][route.final_port_id] = 1
 
     def add_ships(self, ships_file):
         for ship in self.ships_generator(ships_file):
