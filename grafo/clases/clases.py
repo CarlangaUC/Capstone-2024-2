@@ -20,8 +20,10 @@ class Ship:
     def unload(self, load):
         print(f"Barco {self.ship_id} descargando...")
         yield self.env.timeout(load)
+        self.load = 0
 
     def drive(self, final_port, load, dist, route_id):
+        self.load = load
         while self.pos < dist:
             print(f"{self.name}, ruta {route_id}, posicion: {self.pos}, "
                   f"tiempo simulacion {self.env.now}")
