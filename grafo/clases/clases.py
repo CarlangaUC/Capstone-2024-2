@@ -29,8 +29,9 @@ class Ship:
             yield self.env.timeout(UNIT_TIME)
         with final_port.resource.request() as request:
             yield request
+            self.pos = 0
             final_port.ships.append(self.ship_id)
-            yield self.unload(load)
+            yield self.env.process(self.unload(load))
             final_port.ships.remove(self.ship_id)
 
 
@@ -76,7 +77,7 @@ class Manager:
             final_port = self.ports[final_port_id]
             route = self.routes[f"{actual_port_id}-{final_port_id}"]
             route.ships.append(ship.ship_id)
-            ship.drive(final_port, load, route.dist, route.route_id)
+            yield self.env.process(ship.drive(final_port, load, route.dist, route.route_id))
             route.ships.remove(ship.ship_id)
             actual_port_id = final_port_id
 
