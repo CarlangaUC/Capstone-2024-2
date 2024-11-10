@@ -12,9 +12,26 @@ class Ship:
         self.speed = speed
         self.port_id = port_id
         self.ship_id = Ship.ship_id
+        self.load = 0
         self.pos = 0
         self.route_id = -1
         Ship.ship_id += 1
+
+    def unload(self, load):
+        print(f"Barco {self.ship_id} descargando...")
+        yield self.env.timeout(load)
+
+    def drive(self, final_port, load, dist, route_id):
+        while self.pos < dist:
+            print(f"{self.name}, ruta {route_id}, posicion: {self.pos}, "
+                  f"tiempo simulacion {self.env.now}")
+            self.pos += self.speed
+            yield self.env.timeout(UNIT_TIME)
+        with final_port.resource.request() as request:
+            yield request
+            final_port.ships.append(self.ship_id)
+            yield self.unload(load)
+            final_port.ships.remove(self.ship_id)
 
 
 class Port:
@@ -25,21 +42,18 @@ class Port:
         self.capacity = capacity
         self.port_id = port_id
         self.ships = []
-        # IDEA: el puerto podría tener un resource que sea algo
-        # como "operadores" o "gruas" para modelar la capacidad
+        self.resource = simpy.Resource(env, capacity=capacity)
 
 
 class Route:
-    route_id = 0
 
     def __init__(self, env, initial_port_id, final_port_id, dist):
         self.env = env
         self.initial_port_id = initial_port_id
         self.final_port_id = final_port_id
         self.dist = dist
-        self.route_id = Route.route_id
+        self.route_id = f"{initial_port_id}-{final_port_id}"
         self.ships = []
-        Route.route_id += 1
 
 
 class Manager:
@@ -50,27 +64,25 @@ class Manager:
         self.ports = {}
         self.routes = {}
 
-    def drive(self, ship_id, route_id):
-        route = self.routes[route_id]
-        ship = self.ships[ship_id]
-        final_port = self.ports[route.final_port_id]
-        if route.initial_port_id != ship.port_id:
-            yield self.env.timeout(0)
-        else:
-            ship.route_id = route_id
-            route.ships.append(ship_id)
-            while ship.pos < route.dist:
-                print(f"{ship.name}, ruta {ship.route_id}, posicion: {ship.pos}, "
-                      f"tiempo simulacion {ship.env.now}")
-                ship.pos += ship.speed
-                yield ship.env.timeout(UNIT_TIME)
-            route.ships.remove(ship_id)
-            final_port.ships.append(ship_id)
-
     # estas funciones generator son solo una forma "elegante" de cargar los
     # archivos .txt como instancias
+    def general_event_loop(self, events_dict):
+        for key in events_dict:
+            self.event_loop(key, events_dict[key])
+
+    def ship_event_loop(self, ship, events):
+        actual_port_id = ship.port_id
+        for (final_port_id, load) in events:
+            final_port = self.ports[final_port_id]
+            route = self.routes[f"{actual_port_id}-{final_port_id}"]
+            route.ships.append(ship.ship_id)
+            ship.drive(final_port, load, route.dist, route.route_id)
+            route.ships.remove(ship.ship_id)
+            actual_port_id = final_port_id
+
     def ports_generator(self, ports_file):
         with open(ports_file) as file:
+            file.readline()
             for line in file:
                 data = line.strip().split(";")
                 yield Port(self.env, data[0],
@@ -78,6 +90,7 @@ class Manager:
 
     def routes_generator(self, routes_file):
         with open(routes_file) as file:
+            file.readline()
             for line in file:
                 data = line.strip().split(";")
                 yield Route(self.env, int(data[0]),
@@ -85,6 +98,7 @@ class Manager:
 
     def ships_generator(self, ships_file):
         with open(ships_file) as file:
+            file.readline()
             for line in file:
                 data = line.strip().split(";")
                 yield Ship(self.env, data[0], float(data[1]),
@@ -93,12 +107,12 @@ class Manager:
     def add_ports(self, ports_file):
         for i, port in enumerate(self.ports_generator(ports_file)):
             self.ports[port.port_id] = port
-        self.matrix = np.zeros((i + 1, i + 1))
+        self.matrix = -1 * np.ones((i + 1, i + 1))
 
     def add_routes(self, routes_file):
         for route in self.routes_generator(routes_file):
             self.routes[route.route_id] = route
-            self.matrix[route.initial_port_id][route.final_port_id] = 1
+            self.matrix[route.initial_port_id][route.final_port_id] = route.dist
 
     def add_ships(self, ships_file):
         for ship in self.ships_generator(ships_file):
@@ -109,9 +123,9 @@ class Manager:
         self.add_routes(routes_file)
         self.add_ships(ships_file)
 
-    def processes(self, routes_id):
-        for ship_id, route_id in zip(self.ships, routes_id):
-            self.env.process(self.drive(ship_id, route_id))
+    def processes(self, events_tuples):
+        for ship_id, events in events_tuples:
+            self.env.process(self.ship_event_loop(self.ships[ship_id], events))
 
     def run(self, until):
         self.env.run(until=until)

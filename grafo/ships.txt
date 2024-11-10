@@ -1,3 +1,4 @@
+name;speed;port_id
 barco 0;1;0
 barco 1;1;1
 barco 2;1;2
