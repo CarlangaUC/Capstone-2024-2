@@ -1,3 +1,4 @@
+from itertools import cycle
 import numpy as np
 import simpy
 UNIT_TIME = 1
@@ -6,7 +7,7 @@ UNIT_TIME = 1
 class Ship:
     ship_id = 0
 
-    def __init__(self, env, name, speed, port_id):
+    def __init__(self, env, name, speed, port_id, cycles):
         self.env = env
         self.name = name
         self.speed = speed
@@ -14,25 +15,35 @@ class Ship:
         self.ship_id = Ship.ship_id
         self.load = 0
         self.pos = 0
-        self.route_id = -1
+        # True si su itinerario es cíclico, sino False
+        self.cycles = bool(cycles)
+        self.route_id = ""
         Ship.ship_id += 1
 
     def unload(self, load):
+        # simula la descarga del barco, espera según la carga que tiene
         print(f"Barco {self.ship_id} descargando...")
         yield self.env.timeout(load)
         self.load = 0
 
     def drive(self, final_port, load, dist, route_id):
+        # seteamos la carga
         self.load = load
+        # movemos el barco
         while self.pos < dist:
             print(f"{self.name}, ruta {route_id}, posicion: {self.pos}, "
-                  f"tiempo simulacion {self.env.now}")
+                f"tiempo simulacion {self.env.now}")
             self.pos += self.speed
             yield self.env.timeout(UNIT_TIME)
+        # estacionamos en el puerto, esperando si es necesario
         with final_port.resource.request() as request:
+            # este yield es para que la simulación espere
+            # hasta que el recurso se libere
             yield request
             self.pos = 0
             final_port.ships.append(self.ship_id)
+            # al hacer yield del proceso esperamos a que
+            # la función unload termine
             yield self.env.process(self.unload(load))
             final_port.ships.remove(self.ship_id)
 
@@ -55,6 +66,8 @@ class Route:
         self.initial_port_id = initial_port_id
         self.final_port_id = final_port_id
         self.dist = dist
+        # creamos el id de esta forma para después hacer la
+        # búsqueda de una ruta más rápida
         self.route_id = f"{initial_port_id}-{final_port_id}"
         self.ships = []
 
@@ -67,22 +80,34 @@ class Manager:
         self.ports = {}
         self.routes = {}
 
-    # estas funciones generator son solo una forma "elegante" de cargar los
-    # archivos .txt como instancias
-    def general_event_loop(self, events_dict):
-        for key in events_dict:
-            self.event_loop(key, events_dict[key])
-
+    # representa el event loop para un barco en particular 
     def ship_event_loop(self, ship, events):
         actual_port_id = ship.port_id
+        # si cicla, entonces cambiamos events por cycle(events),
+        # que nos entrega una generador que repite los elementos
+        # de events infinitamente
+        if ship.cycles:
+            events = cycle(events)
         for (final_port_id, load) in events:
             final_port = self.ports[final_port_id]
             route = self.routes[f"{actual_port_id}-{final_port_id}"]
             route.ships.append(ship.ship_id)
+            # al hacer yield del proceso esperamos a que
+            # la función drive termine
             yield self.env.process(ship.drive(final_port, load, route.dist, route.route_id))
             route.ships.remove(ship.ship_id)
             actual_port_id = final_port_id
 
+    def processes(self, events_tuples):
+        for ship_id, events in events_tuples:
+            self.env.process(self.ship_event_loop(self.ships[ship_id], events))
+
+    def run(self, until):
+        self.env.run(until=until)
+
+    # estas funciones generator son solo una forma "elegante" de cargar los
+    # .txt como instancias. NO tienen que ver con la simulación en simpy y
+    # no son tan importantes.
     def ports_generator(self, ports_file):
         with open(ports_file) as file:
             file.readline()
@@ -105,7 +130,7 @@ class Manager:
             for line in file:
                 data = line.strip().split(";")
                 yield Ship(self.env, data[0], float(data[1]),
-                           int(data[2]))
+                           int(data[2]), int(data[3]))
 
     def add_ports(self, ports_file):
         for i, port in enumerate(self.ports_generator(ports_file)):
@@ -125,10 +150,3 @@ class Manager:
         self.add_ports(ports_file)
         self.add_routes(routes_file)
         self.add_ships(ships_file)
-
-    def processes(self, events_tuples):
-        for ship_id, events in events_tuples:
-            self.env.process(self.ship_event_loop(self.ships[ship_id], events))
-
-    def run(self, until):
-        self.env.run(until=until)
