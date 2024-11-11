@@ -4,17 +4,17 @@ import numpy as np
 
 datos = [
 
-    [[["Barco,Juanin,2,Lays", "Barco,NewBoat,3,Chips"], [""], ["Puerto,Abayarde,1,"]],
+    [[["", "Barco,Coraza,3,Chips"], [""], ["Puerto,Abayarde,1,"]],
      [[""], [""], [""]],
      [[""], ["Barco,Titanic,1,Abayarde"], [""]]],
     
     [[[""], [""], ["Puerto,Abayarde,1,"]],
-     [["Barco,Juanin,2,Lays"], ["Barco,NewBoat,3,Chips"], ["Barco,Titanic,1,Abayarde"]],
+     [[""], ["Barco,Coraza,3,Chips"], ["Barco,Titanic,1,Abayarde"]],
      [[""], [""], [""]]],
     
     [[[""], [""], ["Puerto,Abayarde,1,Titanic"]],
      [[""], [""], [""]],
-     [["Barco,Juanin,2,Lays"], ["Barco,NewBoat,3,Chips"], [""]]]
+     [[""], ["Barco,Coraza,3,Chips"], [""]]]
 ]
 
 def crear_puertos(ax, estado_inicial):
@@ -83,6 +83,9 @@ def animar(datos):
     barcos = inicializar_barcos(ax, datos[0])  
     
     ani = animation.FuncAnimation(fig, actualizar_barcos, frames=len(datos), fargs=(barcos, datos), interval=500, blit=False)
+    
+    ani.save("animacion_barcos.gif", writer='pillow', fps=2)
+
     
     plt.show()
 
