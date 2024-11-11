@@ -20,6 +20,7 @@ class Ship:
         self.cycles = bool(cycles)
         self.route_id = ""
         Ship.ship_id += 1
+        #Tiempo de carga y descarga y metemos el itinerario de barcos como interno en simpy
         self.recharge = recharge 
         self.itinerary = itinerary
         self.actual_port = port_id
@@ -30,7 +31,7 @@ class Ship:
         archivo.write(f"event;ES2;{self.ship_id};{self.actual_port};{self.env.now}\n")
         yield self.env.timeout(self.recharge)
 
-    def drive(self, final_port, dist, route_id,archivo):
+    def drive(self, final_port, dist, route_id,archivo): #Metodo importante, pensar sobrecarga de puertos y cambio de rutas
         # seteamos la carga
         # movemos el barco
         while self.pos < dist:
@@ -38,6 +39,7 @@ class Ship:
                 #f"tiempo simulacion {self.env.now}\n")
             self.pos += self.speed
             pos_total = round(self.pos/dist,2)
+            #Escribir output formato
             archivo.write(f"event;ES1;{self.ship_id};{self.actual_port}-{final_port.port_id};{pos_total};{self.env.now}\n")
             yield self.env.timeout(UNIT_TIME)
         # estacionamos en el puerto, esperando si es necesario
@@ -111,6 +113,7 @@ class Manager:
         #Procesar cada barco con su itinerario asociado
         for ship_id, ship in self.ships.items():
             self.env.process(self.ship_event_loop(ship,ship.itinerary,self.archivo))
+            
 
     def run(self, until):
         self.env.run(until=until)
@@ -165,10 +168,9 @@ class Manager:
         self.add_ports(ports_file)
         self.add_routes(routes_file)
         self.add_ships(ships_file)
-        
         self.output(self.archivo)
 
-
+    #Formar formato pedido
     def output(self,archivo):
         
         for ship in self.ships.values():

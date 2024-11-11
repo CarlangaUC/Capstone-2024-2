@@ -2,7 +2,7 @@ from collections import namedtuple
 from clases.clases import Manager
 #Event = namedtuple("Event", ["final_port_id", "load"])
 
-def manejar_archivo(archivo):
+def manejar_archivo(archivo): # COMPLETAR (PROBABLEMENTE)
     with open(archivo, "r") as datos_entrada:
         eventos = datos_entrada.strip().split("\n")
     
@@ -29,7 +29,7 @@ def manejar_archivo(archivo):
             
 manager = Manager()
 manager.add("ports.txt", "routes.txt", "ships.txt")
-manager.processes()
+manager.processes() #Adaptado para que no sean eventos como tal 
 manager.run(50)
 
 
