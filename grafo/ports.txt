@@ -1,0 +1,4 @@
+name;capacity;port_id
+san antonio;100;0
+valparaiso;100;1
+antofagasta;150;2

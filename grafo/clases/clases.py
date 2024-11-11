@@ -1,13 +1,14 @@
 from itertools import cycle
 import numpy as np
 import simpy
+
 UNIT_TIME = 1
 
 
 class Ship:
     ship_id = 0
 
-    def __init__(self, env, name, speed, port_id, cycles):
+    def __init__(self, env, name, speed, port_id, cycles,recharge,itinerary):
         self.env = env
         self.name = name
         self.speed = speed
@@ -19,16 +20,16 @@ class Ship:
         self.cycles = bool(cycles)
         self.route_id = ""
         Ship.ship_id += 1
+        self.recharge = recharge 
+        self.itinerary = itinerary
 
-    def unload(self, load):
+    def unload(self):
         # simula la descarga del barco, espera según la carga que tiene
         print(f"Barco {self.ship_id} descargando...")
-        yield self.env.timeout(load)
-        self.load = 0
+        yield self.env.timeout(self.recharge)
 
-    def drive(self, final_port, load, dist, route_id):
+    def drive(self, final_port, dist, route_id):
         # seteamos la carga
-        self.load = load
         # movemos el barco
         while self.pos < dist:
             print(f"{self.name}, ruta {route_id}, posicion: {self.pos}, "
@@ -44,7 +45,7 @@ class Ship:
             final_port.ships.append(self.ship_id)
             # al hacer yield del proceso esperamos a que
             # la función unload termine
-            yield self.env.process(self.unload(load))
+            yield self.env.process(self.unload())
             final_port.ships.remove(self.ship_id)
 
 
@@ -79,31 +80,35 @@ class Manager:
         self.ships = {}
         self.ports = {}
         self.routes = {}
-
+    
     # representa el event loop para un barco en particular 
     def ship_event_loop(self, ship, events):
         actual_port_id = ship.port_id
         # si cicla, entonces cambiamos events por cycle(events),
         # que nos entrega una generador que repite los elementos
         # de events infinitamente
+        events = ship.itinerary
+        
         if ship.cycles:
             events = cycle(events)
-        for (final_port_id, load) in events:
+        for final_port_id in events:
             final_port = self.ports[final_port_id]
             route = self.routes[f"{actual_port_id}-{final_port_id}"]
             route.ships.append(ship.ship_id)
             # al hacer yield del proceso esperamos a que
             # la función drive termine
-            yield self.env.process(ship.drive(final_port, load, route.dist, route.route_id))
+            yield self.env.process(ship.drive(final_port,route.dist, route.route_id))
             route.ships.remove(ship.ship_id)
             actual_port_id = final_port_id
 
-    def processes(self, events_tuples):
-        for ship_id, events in events_tuples:
-            self.env.process(self.ship_event_loop(self.ships[ship_id], events))
+    def processes(self):
+        #Procesar cada barco con su itinerario asociado
+        for ship_id, ship in self.ships.items():
+            self.env.process(self.ship_event_loop(ship,ship.itinerary))
 
     def run(self, until):
         self.env.run(until=until)
+
 
     # estas funciones generator son solo una forma "elegante" de cargar los
     # .txt como instancias. NO tienen que ver con la simulación en simpy y
@@ -126,11 +131,16 @@ class Manager:
 
     def ships_generator(self, ships_file):
         with open(ships_file) as file:
-            file.readline()
+            file.readline()  
             for line in file:
                 data = line.strip().split(";")
-                yield Ship(self.env, data[0], float(data[1]),
-                           int(data[2]), int(data[3]))
+                name = data[0]
+                speed = float(data[1])
+                port_id = int(data[2])
+                cycles = int(data[3])
+                recharge = int(data[4])  
+                itinerary = list(map(int, data[5].split(",")))  
+                yield Ship(self.env, name, speed, port_id, cycles, recharge, itinerary)
 
     def add_ports(self, ports_file):
         for i, port in enumerate(self.ports_generator(ports_file)):
@@ -141,6 +151,8 @@ class Manager:
         for route in self.routes_generator(routes_file):
             self.routes[route.route_id] = route
             self.matrix[route.initial_port_id][route.final_port_id] = route.dist
+        print(self.matrix)
+
 
     def add_ships(self, ships_file):
         for ship in self.ships_generator(ships_file):
@@ -150,3 +162,5 @@ class Manager:
         self.add_ports(ports_file)
         self.add_routes(routes_file)
         self.add_ships(ships_file)
+
+#este evento es el de recorrer, lo metere en el input a cada uno, adapta la parte de leer barcos con esto en mente
