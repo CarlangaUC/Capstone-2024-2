@@ -9,6 +9,7 @@ class Ship:
     ship_id = 0
 
     def __init__(self, env, name, speed, port_id, cycles,recharge,itinerary):
+        
         self.env = env
         self.name = name
         self.speed = speed
@@ -31,29 +32,37 @@ class Ship:
         archivo.write(f"event;ES2;{self.ship_id};{self.actual_port};{self.env.now}\n")
         yield self.env.timeout(self.recharge)
 
-    def drive(self, final_port, dist, route_id,archivo): #Metodo importante, pensar sobrecarga de puertos y cambio de rutas
-        # seteamos la carga
-        # movemos el barco
-        while self.pos < dist:
-            #archivo.write(f"{self.name}, ruta {route_id}, posicion: {self.pos}, "
-                #f"tiempo simulacion {self.env.now}\n")
-            self.pos += self.speed
-            pos_total = round(self.pos/dist,2)
-            #Escribir output formato
-            archivo.write(f"event;ES1;{self.ship_id};{self.actual_port}-{final_port.port_id};{pos_total};{self.env.now}\n")
-            yield self.env.timeout(UNIT_TIME)
-        # estacionamos en el puerto, esperando si es necesario
-        with final_port.resource.request() as request:
-            # este yield es para que la simulación espere
-            # hasta que el recurso se libere
-            yield request
-            self.pos = 0
-            final_port.ships.append(self.ship_id)
-            # al hacer yield del proceso esperamos a que
-            # la función unload termine
-            yield self.env.process(self.unload(archivo))
-            final_port.ships.remove(self.ship_id)
 
+    def search_route(self,final_port,matriz_adyacencia): # TITAN A RESOLVER
+        
+        pass
+
+    def drive(self, final_port, dist, route_id,archivo,matriz_adyacencia): #Metodo importante, pensar sobrecarga de puertos y cambio de rutas
+        
+        
+        #Recurso compartido, no es necesario preguntarse si cierra/capacidad llena a mitad del viaje dado que lo parte estando lleno
+        #AUN NO IMPLEMENTADO INPUTS VARIABLES PARA QUE CIERRE A MITAD DEL TRAYECTO
+        
+        if final_port.open == False:
+            pass # PASA AL SIGUIENTE DEL ITINERARIO
+        
+        with final_port.resource.request() as request: # ENCALLADO PERO ESTA ABIERTO EL PUERTO
+            yield request
+            
+            while self.pos < dist:
+                #archivo.write(f"{self.name}, ruta {route_id}, posicion: {self.pos}, "
+                    #f"tiempo simulacion {self.env.now}\n")
+                self.pos += self.speed
+                pos_total = round(self.pos/dist,2)
+                #Escribir output formato
+                archivo.write(f"event;ES1;{self.ship_id};{self.actual_port}-{final_port.port_id};{pos_total};{self.env.now}\n")
+                yield self.env.timeout(UNIT_TIME)
+                self.pos = 0
+                final_port.ships.append(self.ship_id)
+                # al hacer yield del proceso esperamos a que
+                # la función unload termine
+                yield self.env.process(self.unload(archivo))
+                final_port.ships.remove(self.ship_id)
 
 class Port:
 
@@ -63,6 +72,7 @@ class Port:
         self.capacity = capacity
         self.port_id = port_id
         self.ships = []
+        self.open = True # ASUMIR QUE TODOS PARTEN ABIERTOS
         self.resource = simpy.Resource(env, capacity=capacity)
 
 
@@ -78,6 +88,7 @@ class Route:
         self.route_id = f"{initial_port_id}-{final_port_id}"
         self.ships = []
 
+        #FALTA LA CAPACIDAD DE RUTA PERO COMENTAR Y PENSAR
 
 class Manager:
 
@@ -98,13 +109,16 @@ class Manager:
         
         if ship.cycles:
             events = cycle(events)
-        for final_port_id in events:
+        for final_port_id in events: # Todos los puertos del itinerario
             final_port = self.ports[final_port_id]
-            route = self.routes[f"{actual_port_id}-{final_port_id}"]
+            route = self.routes[f"{actual_port_id}-{final_port_id}"] # Ruta directa
+            
+            #search_rutes
+            
             route.ships.append(ship.ship_id)
             # al hacer yield del proceso esperamos a que
             # la función drive termine
-            yield self.env.process(ship.drive(final_port,route.dist, route.route_id,archivo))
+            yield self.env.process(ship.drive(final_port,route.dist, route.route_id,archivo,self.matrix))
             route.ships.remove(ship.ship_id)
             actual_port_id = final_port_id
             ship.actual_port = final_port_id
@@ -153,13 +167,14 @@ class Manager:
     def add_ports(self, ports_file):
         for i, port in enumerate(self.ports_generator(ports_file)):
             self.ports[port.port_id] = port
-        self.matrix = -1 * np.ones((i + 1, i + 1))
+        self.matrix = 0 * np.ones((i + 1, i + 1))
 
     def add_routes(self, routes_file):
         for route in self.routes_generator(routes_file):
             self.routes[route.route_id] = route
             self.matrix[route.initial_port_id][route.final_port_id] = route.dist
-
+        #print(self.matrix)
+        
     def add_ships(self, ships_file):
         for ship in self.ships_generator(ships_file):
             self.ships[ship.ship_id] = ship
