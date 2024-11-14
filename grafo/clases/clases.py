@@ -57,12 +57,12 @@ class Ship:
                 #Escribir output formato
                 archivo.write(f"event;ES1;{self.ship_id};{self.actual_port}-{final_port.port_id};{pos_total};{self.env.now}\n")
                 yield self.env.timeout(UNIT_TIME)
-                self.pos = 0
-                final_port.ships.append(self.ship_id)
-                # al hacer yield del proceso esperamos a que
-                # la función unload termine
-                yield self.env.process(self.unload(archivo))
-                final_port.ships.remove(self.ship_id)
+            self.pos = 0
+            final_port.ships.append(self.ship_id)
+            # al hacer yield del proceso esperamos a que
+            # la función unload termine
+            yield self.env.process(self.unload(archivo))
+            final_port.ships.remove(self.ship_id)
 
 class Port:
 
