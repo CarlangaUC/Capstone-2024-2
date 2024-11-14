@@ -113,7 +113,7 @@ class Manager:
             final_port = self.ports[final_port_id]
             route = self.routes[f"{actual_port_id}-{final_port_id}"] # Ruta directa
             
-            #search_rutes
+            #search_rutes funcion
             
             route.ships.append(ship.ship_id)
             # al hacer yield del proceso esperamos a que
