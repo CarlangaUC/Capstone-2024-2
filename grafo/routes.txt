@@ -1,5 +1,5 @@
-initial_port_id;final_port_id;dist
-0;1;5
-1;2;5
-2;0;15
-0;2;15
+initial_port_id;final_port_id;dist;capacity
+0;1;5;1
+1;2;5;1
+2;0;15;1
+0;2;15;1
