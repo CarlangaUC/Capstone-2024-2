@@ -36,7 +36,8 @@ class Ship:
         self.end_time = 0
 
         #Tiempo de espera en rutas y puertos
-        self.total_wait_time = 0
+        self.total_wait_time_routes = 0
+        self.total_wait_time_ports = 0
         
     def unload(self, archivo):
         # simula la descarga del barco, espera según la carga que tiene
@@ -46,6 +47,7 @@ class Ship:
         yield self.env.timeout(self.recharge)
 
 # Método importante, pensar sobrecarga de puertos y cambio de rutas
+
     def drive(self, final_port, route, archivo, matriz_adyacencia):
         # Recurso compartido, no es necesario preguntarse si cierra/capacidad
         # llena a mitad del viaje dado que lo parte estando lleno
@@ -59,7 +61,8 @@ class Ship:
             wait_start = self.env.now
             yield request
             
-            self.total_wait_time += self.env.now - wait_start
+            self.total_wait_time_routes += self.env.now - wait_start
+            
             
             while self.pos < route.dist:
                 self.pos += self.speed
@@ -75,7 +78,13 @@ class Ship:
                 yield self.env.timeout(UNIT_TIME)
                 
         with final_port.resource.request() as request:
+            
+            print(f"{self.name} esperando...")
+            wait_start = self.env.now            
             yield request
+            
+            self.total_wait_time_ports += self.env.now - wait_start 
+
             self.pos = 0
             final_port.ships.append(self.ship_id)
             # al hacer yield del proceso esperamos a que
@@ -84,7 +93,6 @@ class Ship:
             yield self.env.process(self.unload(archivo))
             final_port.ships.remove(self.ship_id)
             
-            self.total_wait_time += self.env.now - wait_start 
 
 
 
@@ -205,8 +213,10 @@ class Manager:
                 
                 visitados = set()
 
+                ship.end_time = self.env.now #Se considera el tiempo de la ultima vez que cumplio el itinerario completo
         
         ship.end_time = self.env.now
+
         
         
     def processes(self):
@@ -274,22 +284,21 @@ class Manager:
 
     def calculate_metrics(self):
         
-        with open("archivo.txt", "a") as archivo:
-            archivo.write("\nMétricas:\n")
+        for ship in self.ships.values():
+            total_time = ship.end_time - ship.start_time
+            print(f"Barco {ship.ship_id} - "
+                            f"Tiempo total itinerario cumplido: {total_time} unidades de tiempo\n")
 
-            for ship in self.ships.values():
-                total_time = ship.end_time - ship.start_time
-                print(f"Metrica 1: Barco {ship.ship_id} - "
-                                f"Tiempo total itinerario: {total_time} unidades de tiempo\n")
-
-
-
-        total_wait_time = sum(ship.total_wait_time for ship in self.ships.values())
+        total_wait_time_routes = sum(ship.total_wait_time_routes for ship in self.ships.values())
+        total_wait_time_ports = sum(ship.total_wait_time_ports for ship in self.ships.values())
         num_events = len(self.ships)
-        avg_wait_time = total_wait_time / num_events if num_events > 0 else 0
-        archivo.write(f"\nMetrica 4: Tiempo promedio de espera en rutas y puertos: "
-                    f"{avg_wait_time:.2f} unidades de tiempo\n")
-    
+        avg_wait_time_routes = total_wait_time_routes / num_events if num_events > 0 else 0
+        avg_wait_time_ports = total_wait_time_ports / num_events if num_events > 0 else 0
+        print(f"Tiempo promedio de espera en rutas: "
+                    f"{avg_wait_time_routes:.2f} unidades de tiempo\n")
+        print(f"Tiempo promedio de espera en puertos: "
+                f"{avg_wait_time_ports:.2f} unidades de tiempo\n")
+        
     # formar formato pedido
     def output(self, archivo):
         for ship in self.ships.values():
