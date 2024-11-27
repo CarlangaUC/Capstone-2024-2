@@ -31,3 +31,5 @@ manager = Manager()
 manager.add("ports.txt", "routes.txt", "ships.txt")
 manager.processes()
 manager.run(200)
+
+manager.calculate_metrics()

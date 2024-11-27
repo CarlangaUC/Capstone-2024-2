@@ -28,6 +28,16 @@ class Ship:
         self.itinerary = itinerary
         self.actual_port = port_id
 
+    
+        #Metricas
+        
+        #Tiempo total del itinerario
+        self.start_time = 0
+        self.end_time = 0
+
+        #Tiempo de espera en rutas y puertos
+        self.total_wait_time = 0
+        
     def unload(self, archivo):
         # simula la descarga del barco, espera según la carga que tiene
         archivo.write(f"event;ES2;{self.ship_id};{self.actual_port};"
@@ -39,9 +49,18 @@ class Ship:
     def drive(self, final_port, route, archivo, matriz_adyacencia):
         # Recurso compartido, no es necesario preguntarse si cierra/capacidad
         # llena a mitad del viaje dado que lo parte estando lleno
+        
+        #PENSAR SI SE TIENE QUE ESPERAR A LOS DEMAS BARCOS PARA OCUPARLA
+        
+        
         with route.resource.request() as request:
+            
             print(f"{self.name} esperando...")
+            wait_start = self.env.now
             yield request
+            
+            self.total_wait_time += self.env.now - wait_start
+            
             while self.pos < route.dist:
                 self.pos += self.speed
                 pos_total = round(self.pos/route.dist, 2)
@@ -52,7 +71,9 @@ class Ship:
                 print(f"{self.name}, ruta {route.route_id}, "
                       f"posicion: {self.pos}, "
                       f"tiempo simulacion {self.env.now}")
+                
                 yield self.env.timeout(UNIT_TIME)
+                
         with final_port.resource.request() as request:
             yield request
             self.pos = 0
@@ -62,6 +83,9 @@ class Ship:
             # MATAR Y VERIFICAR SI ESTA ABIERTO NUEVAMENTE
             yield self.env.process(self.unload(archivo))
             final_port.ships.remove(self.ship_id)
+            
+            self.total_wait_time += self.env.now - wait_start 
+
 
 
 class Port:
@@ -89,7 +113,7 @@ class Route:
         self.ships = []
         self.resource = simpy.Resource(env, capacity=capacity)
         self.open = True
-        # FALTA LA CAPACIDAD DE RUTA PERO COMENTAR Y PENSAR
+        # FALTA LA CAPACIDAD DE RUTA PERO COMENTAR Y PENSAR ||| ESTA EN EL RECURSO
 
 
 class Manager:
@@ -100,8 +124,10 @@ class Manager:
         self.ports = {}
         self.routes = {}
         self.archivo = open("archivo.txt", "w")
+        #self.info = {}
     # representa el event loop para un barco en particular
 
+        
     def search_route(self, actual_port_id, final_port, matriz_adyacencia):
         N = len(matriz_adyacencia)
         costos = [float('inf')] * N
@@ -137,17 +163,18 @@ class Manager:
         return ruta
 
     def ship_event_loop(self, ship, events, archivo):
+        
         actual_port_id = ship.port_id
         # si cicla, entonces cambiamos events por cycle(events),
         # que nos entrega una generador que repite los elementos
         # de events infinitamente
         events = ship.itinerary
         test = events
-        if ship.cycles:
-            events = cycle(events)
-
         # while para obligar cumplir itinerario
         visitados = set()
+        
+        ship.start_time = self.env.now 
+
         while len(visitados) != len(test):
             # todos los puertos del itinerario
             for final_port_id in events:
@@ -173,7 +200,15 @@ class Manager:
                         actual_port_id = final_port_id
                         ship.actual_port = final_port_id
                     visitados.add(final_port_id)
+                    
+            if ship.cycles and len(visitados) == len(test): # Para itinerario cyclico
+                
+                visitados = set()
 
+        
+        ship.end_time = self.env.now
+        
+        
     def processes(self):
         # procesar cada barco con su itinerario asociado
         for ship_id, ship in self.ships.items():
@@ -237,6 +272,24 @@ class Manager:
         self.add_ships(ships_file)
         self.output(self.archivo)
 
+    def calculate_metrics(self):
+        
+        with open("archivo.txt", "a") as archivo:
+            archivo.write("\nMétricas:\n")
+
+            for ship in self.ships.values():
+                total_time = ship.end_time - ship.start_time
+                print(f"Metrica 1: Barco {ship.ship_id} - "
+                                f"Tiempo total itinerario: {total_time} unidades de tiempo\n")
+
+
+
+        total_wait_time = sum(ship.total_wait_time for ship in self.ships.values())
+        num_events = len(self.ships)
+        avg_wait_time = total_wait_time / num_events if num_events > 0 else 0
+        archivo.write(f"\nMetrica 4: Tiempo promedio de espera en rutas y puertos: "
+                    f"{avg_wait_time:.2f} unidades de tiempo\n")
+    
     # formar formato pedido
     def output(self, archivo):
         for ship in self.ships.values():
