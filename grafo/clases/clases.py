@@ -4,7 +4,9 @@ import simpy
 import heapq
 
 UNIT_TIME = 1
-
+WEATHER_FACT = 1
+SECURITY_FACT = 1
+REGULATIONS_FACT = 1
 
 class Ship:
     ship_id = 0
@@ -94,8 +96,6 @@ class Ship:
             final_port.ships.remove(self.ship_id)
             
 
-
-
 class Port:
 
     def __init__(self, env, name, capacity, port_id):
@@ -110,20 +110,28 @@ class Port:
 
 class Route:
 
-    def __init__(self, env, initial_port_id, final_port_id, dist, capacity):
+    def __init__(self, env, initial_port_id, final_port_id,
+                 dist, capacity, weather, security, regulations):
         self.env = env
         self.initial_port_id = initial_port_id
         self.final_port_id = final_port_id
         self.dist = dist
+        
+        self.weather = weather
+        self.security = security
+        self.regulations = regulations
+        
         # creamos el id de esta forma para después hacer la
         # búsqueda de una ruta más rápida
+        
         self.route_id = f"{initial_port_id}-{final_port_id}"
         self.ships = []
         self.resource = simpy.Resource(env, capacity=capacity)
         self.open = True
-        # FALTA LA CAPACIDAD DE RUTA PERO COMENTAR Y PENSAR ||| ESTA EN EL RECURSO
 
 
+        
+        
 class Manager:
 
     def __init__(self):
@@ -152,23 +160,37 @@ class Manager:
             if puerto_actual == final_port:
                 break
             for vecino in range(N):
-                costo_ruta = matriz_adyacencia[puerto_actual][vecino]
+                ruta_id = matriz_adyacencia[puerto_actual][vecino]
+                if ruta_id == 0:
+                    continue 
+                ruta_temp = self.routes[ruta_id]
+                costo_ruta = (
+                    ruta_temp.dist
+                    + WEATHER_FACT * ruta_temp.weather
+                    + SECURITY_FACT * ruta_temp.security
+                    + REGULATIONS_FACT * ruta_temp.regulations
+                )
                 if costo_ruta > 0 and not visitados[vecino]:
                     nuevo_costo = costo_actual + costo_ruta
                     if nuevo_costo < costos[vecino]:
                         costos[vecino] = nuevo_costo
                         previos[vecino] = puerto_actual
                         heapq.heappush(cola_prioridad, (nuevo_costo, vecino))
+
         if costos[final_port] == float('inf'):
             print("No hay ruta disponible entre los puertos.")
             return None
+
+        # Reconstruir la ruta
         ruta = []
         puerto = final_port
         while puerto != -1 and previos[puerto] != -1:
             ruta.append(f"{previos[puerto]}-{puerto}")
             puerto = previos[puerto]
         ruta.reverse()
+        print("Ruta encontrada:", ruta)
         return ruta
+
 
     def ship_event_loop(self, ship, events, archivo):
         
@@ -183,7 +205,7 @@ class Manager:
         
         ship.start_time = self.env.now 
 
-        while len(visitados) != len(test):
+        while len(visitados) != len(test): 
             # todos los puertos del itinerario
             for final_port_id in events:
                 if final_port_id not in visitados:
@@ -245,7 +267,7 @@ class Manager:
             for line in file:
                 data = line.strip().split(";")
                 yield Route(self.env, int(data[0]), int(data[1]),
-                            int(data[2]), int(data[3]))
+                            int(data[2]), int(data[3]), float(data[4]), float(data[5]), float(data[6]))
 
     def ships_generator(self, ships_file):
         with open(ships_file) as file:
@@ -264,13 +286,16 @@ class Manager:
     def add_ports(self, ports_file):
         for i, port in enumerate(self.ports_generator(ports_file)):
             self.ports[port.port_id] = port
-        self.matrix = 0 * np.ones((i + 1, i + 1))
+            
+        #ASUMIR IDS SECUENCIALES PARA QUE NO SE ESCAPE LA MATRIZ DE RANGO
+        
+        self.matrix = [[0 for _ in range(i + 1)] for _ in range(i + 1)]
 
     def add_routes(self, routes_file):
         for route in self.routes_generator(routes_file):
             self.routes[route.route_id] = route
-            self.matrix[route.initial_port_id][route.final_port_id] = route.dist
-        print(self.matrix)
+            self.matrix[route.initial_port_id][route.final_port_id] = route.route_id
+        #print(self.matrix)
 
     def add_ships(self, ships_file):
         for ship in self.ships_generator(ships_file):
