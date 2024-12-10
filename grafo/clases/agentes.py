@@ -1,4 +1,5 @@
 import simpy
+import random
 
 UNIT_TIME = 1
 WEATHER_FACT = 1
@@ -23,7 +24,7 @@ class Ship:
         Ship.ship_id += 1
         # Tiempo de carga y descarga y metemos el itinerario
         # de barcos como interno en simpy
-        self.recharge = recharge
+        self.recharge_ = recharge
         self.itinerary = itinerary
         self.actual_port = port_id
 
@@ -37,7 +38,13 @@ class Ship:
         #Tiempo de espera en rutas y puertos
         self.total_wait_time_routes = 0
         self.total_wait_time_ports = 0
-        
+
+    @property
+    def recharge(self):
+        # usamos una distributción uniforme entre recharge_ (tiempo mínimo de
+        # recarga) y recharge_ más 10
+        return int(random.randint(self.recharge_, self.recharge_ + 10))
+
     def unload(self, archivo):
         # simula la descarga del barco, espera según la carga que tiene
         archivo.write(f"event;ES2;{self.ship_id};{self.actual_port};"
