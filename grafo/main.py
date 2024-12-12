@@ -28,8 +28,32 @@ def manejar_archivo(archivo):
 
 
 manager = Manager()
-manager.add("ports.txt", "routes.txt", "ships.txt")
-manager.processes()
-manager.run(200)
 
-manager.calculate_metrics()
+
+############### Input automatico ###########
+
+""" Observaciones:
+    - Pendiente arreglar tema de distancias de rutas respeten
+      la desigualdad triangular
+    - No funciona calculate metrics en este caso
+    - Aveces no encuentra ninguna ruta 
+    - suele fallar con timepos mas de 10, pendiente arreglar
+"""
+
+n_ports = 5
+manager.add(n_ports=n_ports)
+
+manager.processes()
+manager.run(100)
+
+# manager.calculate_metrics()
+
+################ Input con formato texto #############
+# input_file= ["ports.txt", "routes.txt", "ships.txt"]
+
+# manager.add(input_file = input_file)
+
+# manager.processes()
+# manager.run(100)
+
+# manager.calculate_metrics()

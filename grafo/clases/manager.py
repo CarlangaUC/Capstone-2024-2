@@ -1,4 +1,5 @@
 from itertools import cycle
+from clases.input_auto import generate_agents
 from clases.agentes import Ship, Port, Route
 import numpy as np
 import simpy
@@ -180,11 +181,25 @@ class Manager:
         for ship in self.ships_generator(ships_file):
             self.ships[ship.ship_id] = ship
 
-    def add(self, ports_file, routes_file, ships_file):
-        self.add_ports(ports_file)
-        self.add_routes(routes_file)
-        self.add_ships(ships_file)
-        self.output(self.archivo)
+    def add(self, n_ports = None, input_file = None):
+        if input_file == None:
+            ports,routes,ships,matrix = generate_agents(self.env, n_ports)
+
+            self.ports  = ports 
+            self.routes = routes 
+            self.ships  = ships
+            self.matrix = matrix
+
+        else:
+
+            ports_file = input_file[0]
+            routes_file= input_file[1]
+            ships_file= input_file[2]
+
+            self.add_ports(ports_file)
+            self.add_routes(routes_file)
+            self.add_ships(ships_file)
+            self.output(self.archivo)
 
     def calculate_metrics(self):
         
