@@ -1,4 +1,4 @@
-from clases.clases import Manager
+from clases.manager import Manager
 
 
 def manejar_archivo(archivo):
