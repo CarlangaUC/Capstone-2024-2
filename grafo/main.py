@@ -16,7 +16,7 @@ n_ports = 5
 manager.add(n_ports=n_ports)
 
 manager.processes()
-manager.step_run(100,sleep_time=0.01)
+# manager.step_run(2000,sleep_time=0)
 
 
 

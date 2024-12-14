@@ -87,12 +87,12 @@ def all_routes(num_ports):
 
     Output: 
 
-    all_routes -> Lista de todas las rutas posibles en formato string
+    all_routes -> Lista de todas las rutas posibles en formato tupla 
                 VER EJEMPLO:
 
     Ejemplo:
     Suponiendo dos puertos con ID 0,1 respectivamente
-    all_routes == ["0-1","1-0"]
+    all_routes == [(0,1),(1,0)]
 
     
     """
@@ -100,11 +100,14 @@ def all_routes(num_ports):
     for i in range(num_ports):
         for j in range(num_ports):
             if i != j:  
+                route = (i,j)
                 if i in all_routes:
-                    all_routes[i].append(f"{i}-{j}")
+                    all_routes[i].append(route)
                 else:
+
+
                     all_routes[i] = []
-                    all_routes[i].append(f"{i}-{j}")
+                    all_routes[i].append(route)
     return all_routes 
 
 def gen_ships(env,num_ships, num_ports,all_routes):
@@ -167,7 +170,7 @@ def gen_itinerary(num_tasks, port_id, all_routes, used_routes):
     for task in range(0,num_tasks):
         next_route = random.choice(all_routes[port_id])
         used_routes.add(next_route)
-        next_port_id = int(next_route.split("-")[1])
+        next_port_id = next_route[1]
         itinerary.append(next_port_id)
         port_id = next_port_id
     
@@ -190,16 +193,17 @@ def gen_route(env,used_routes):
 
     routes = {}
     used_routes = list(used_routes)
-
     for route in used_routes:
-        initial_port_id= int(route.split("-")[0])
-        final_port_id = int(route.split("-")[1])
-        dist = gen_dist()
+        initial_port_id= route[0]
+        final_port_id = route[1] 
+        dist = gen_dist(route,used_routes)
         capacity = gen_capacity_route()
         weather = gen_weather()
         security = gen_security()
         regulations = gen_regulations()
-        routes[route] = Route(env, initial_port_id, final_port_id, dist, capacity, weather, security, regulations)
+        route_name =f"{initial_port_id}-{final_port_id}"
+        routes[route_name] = Route(env, initial_port_id, final_port_id, dist, capacity, weather, security, regulations)
+
 
     return routes
 
