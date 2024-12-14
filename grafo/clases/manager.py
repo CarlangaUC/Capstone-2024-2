@@ -4,7 +4,7 @@ from clases.agentes import Ship, Port, Route
 import numpy as np
 import simpy
 import heapq
-
+import time
 
 UNIT_TIME = 1
 WEATHER_FACT = 1
@@ -74,7 +74,7 @@ class Manager:
         if ruta == []:
             print("No hay ruta disponible entre los puertos.")
             return None
-        print("Ruta encontrada:", ruta)
+        #print("Ruta encontrada:", ruta)
         return ruta
 
 
@@ -139,9 +139,6 @@ class Manager:
                 ship.end_time = self.env.now  
         
         ship.end_time = self.env.now
-
-
-        
         
     def processes(self):
         # procesar cada barco con su itinerario asociado
@@ -152,6 +149,13 @@ class Manager:
     def run(self, until):
         self.env.run(until=until)
 
+    def step_run(self, until, sleep_time):
+
+        while self.env.now < until:
+            self.env.step()  
+            time.sleep(sleep_time)  
+    
+    
     # estas funciones generator son solo una forma "elegante" de cargar los
     # .txt como instancias. NO tienen que ver con la simulación en simpy y
     # no son tan importantes.
