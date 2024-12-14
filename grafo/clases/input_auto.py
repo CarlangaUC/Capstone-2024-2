@@ -170,7 +170,7 @@ def gen_itinerary(num_tasks, port_id, all_routes, used_routes):
         next_port_id = int(next_route.split("-")[1])
         itinerary.append(next_port_id)
         port_id = next_port_id
-
+    
     return itinerary,used_routes
 
 def gen_route(env,used_routes):
@@ -234,10 +234,10 @@ def gen_capacity_route():
     return random.randint(50, 100)
 
 def gen_weather():
-    return 1
+    return random.randint(0,100)
 
 def gen_security():
-    return 1
+    return random.randint(0,100)
 
 def gen_regulations():
-    return 1
+    return random.randint(0,100)

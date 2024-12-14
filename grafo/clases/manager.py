@@ -21,10 +21,12 @@ class Manager:
         self.routes = {}
         self.archivo = open("archivo.txt", "w")
         #self.info = {}
+        
     # representa el event loop para un barco en particular
 
         
     def search_route(self, actual_port_id, final_port, matriz_adyacencia):
+        
         N = len(matriz_adyacencia)
         costos = [float('inf')] * N
         costos[actual_port_id] = 0
@@ -32,6 +34,7 @@ class Manager:
         visitados = [False] * N
         cola_prioridad = [(0, actual_port_id)]
 
+        
         while cola_prioridad:
             costo_actual, puerto_actual = heapq.heappop(cola_prioridad)
             if visitados[puerto_actual]:
@@ -40,7 +43,7 @@ class Manager:
             if puerto_actual == final_port:
                 break
             for vecino in range(N):
-                ruta_id = matriz_adyacencia[puerto_actual][vecino]
+                ruta_id = matriz_adyacencia[puerto_actual][vecino] 
                 if ruta_id == 0:
                     continue 
                 ruta_temp = self.routes[ruta_id]
@@ -68,56 +71,75 @@ class Manager:
             ruta.append(f"{previos[puerto]}-{puerto}")
             puerto = previos[puerto]
         ruta.reverse()
+        if ruta == []:
+            print("No hay ruta disponible entre los puertos.")
+            return None
         print("Ruta encontrada:", ruta)
         return ruta
 
 
     def ship_event_loop(self, ship, events, archivo):
-        
         actual_port_id = ship.port_id
-        # si cicla, entonces cambiamos events por cycle(events),
-        # que nos entrega una generador que repite los elementos
-        # de events infinitamente
-        events = ship.itinerary
+        events = ship.itinerary  
         test = events
-        # while para obligar cumplir itinerario
-        visitados = set()
-        
-        ship.start_time = self.env.now 
+        visitados = set()  
+        ship.start_time = self.env.now
+        intentos_fallidos = 0  
 
         while len(visitados) != len(test): 
-            # todos los puertos del itinerario
+
+            #print("Puertos visitados:", visitados)
+            #print("Itinerario pendiente:", test)
+            
+            progreso = False  
+            
             for final_port_id in events:
                 if final_port_id not in visitados:
                     final_port = self.ports[final_port_id]
-                    # pensar logica de apertura de puertos indirectamente
                     if not final_port.open:
+                        print(f"El puerto {final_port_id} está cerrado.")
                         continue
-                    rutas = self.search_route(actual_port_id,
-                                              final_port_id,
-                                              self.matrix)
+                    
+                    rutas = self.search_route(actual_port_id, final_port_id, self.matrix)
                     if rutas is None:
+                        print(f"No hay ruta disponible hacia el puerto {final_port_id}.")
                         continue
+                    
+                    progreso = True  # Hay una ruta disponible
                     for ruta in rutas:
                         route = self.routes[ruta]
                         route.ships.append(ship.ship_id)
-                        # al hacer yield del proceso esperamos a que
-                        # la función drive termine
-                        yield self.env.process(ship.drive(final_port,
-                                                          route, archivo,
-                                                          self.matrix))
+                        try:
+                            yield self.env.process(
+                                ship.drive(final_port, route, archivo, self.matrix)
+                            )
+                        except Exception as e:
+                            print(f"Error durante el viaje: {e}")
+                            route.ships.remove(ship.ship_id)
+                            continue
                         route.ships.remove(ship.ship_id)
                         actual_port_id = final_port_id
                         ship.actual_port = final_port_id
                     visitados.add(final_port_id)
-                    
-            if ship.cycles and len(visitados) == len(test): # Para itinerario cyclico
+            
+            # Si no se pudo avanzar en este ciclo
+            if not progreso:
+                intentos_fallidos += 1
+                #print(f"Intento fallido {intentos_fallidos}: no se puede avanzar.")
                 
+                # Terminar si todos los puertos son inaccesibles
+                if intentos_fallidos >= len(events):
+                    #print("Todos los puertos son inaccesibles. Terminando itinerario.")
+                    ship.end_time = self.env.now
+                    return
+            
+            # Reiniciar el itinerario si es cíclico
+            if ship.cycles and len(visitados) == len(test):
                 visitados = set()
-
-                ship.end_time = self.env.now #Se considera el tiempo de la ultima vez que cumplio el itinerario completo
+                ship.end_time = self.env.now  
         
         ship.end_time = self.env.now
+
 
         
         
