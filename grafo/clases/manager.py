@@ -1,13 +1,9 @@
 from clases.input_auto import generate_agents
 from clases.agentes import Ship, Port, Route
+import func_params as f_p
 import simpy
 import heapq
 import time
-
-UNIT_TIME = 1
-WEATHER_FACT = 1
-SECURITY_FACT = 1
-REGULATIONS_FACT = 1
 
 
 class Manager:
@@ -39,12 +35,7 @@ class Manager:
                 if ruta_id == 0:
                     continue
                 ruta_temp = self.routes[ruta_id]
-                costo_ruta = (
-                    ruta_temp.dist
-                    + WEATHER_FACT * ruta_temp.weather
-                    + SECURITY_FACT * ruta_temp.security
-                    + REGULATIONS_FACT * ruta_temp.regulations
-                )
+                costo_ruta = f_p.costo_ruta(ruta_temp)
                 if costo_ruta > 0 and not visitados[vecino]:
                     nuevo_costo = costo_actual + costo_ruta
                     if nuevo_costo < costos[vecino]:

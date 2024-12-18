@@ -1,10 +1,6 @@
+import func_params as f_p
 import simpy
 import random
-
-UNIT_TIME = 1
-WEATHER_FACT = 1
-SECURITY_FACT = 1
-REGULATIONS_FACT = 1
 
 
 class Ship:
@@ -37,7 +33,7 @@ class Ship:
 
     @property
     def recharge(self):
-        # usamos una distributción uniforme entre recharge_ (tiempo mínimo de
+        # usamos una distribución uniforme entre recharge_ (tiempo mínimo de
         # recarga) y recharge_ más 10
         return int(random.randint(self.recharge_, self.recharge_ + 10))
 
@@ -63,7 +59,7 @@ class Ship:
                 print(f"{self.name}, ruta {route.route_id}, "
                       f"posicion: {self.pos}, "
                       f"tiempo simulacion {self.env.now}")
-                yield self.env.timeout(UNIT_TIME)
+                yield self.env.timeout(f_p.UNIT_TIME)
         with final_port.resource.request() as request:
             print(f"{self.name} esperando...")
             wait_start = self.env.now
