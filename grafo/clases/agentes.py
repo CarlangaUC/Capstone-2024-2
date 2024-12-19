@@ -1,6 +1,5 @@
 import func_params as f_p
 import simpy
-import random
 
 
 class Ship:
@@ -10,7 +9,7 @@ class Ship:
                  cycles, recharge, itinerary):
         self.env = env
         self.name = name
-        self.speed = speed
+        self.speed_ = speed
         self.port_id = port_id
         self.ship_id = Ship.ship_id
         self.load = 0
@@ -33,18 +32,21 @@ class Ship:
 
     @property
     def recharge(self):
-        # usamos una distribución uniforme entre recharge_ (tiempo mínimo de
-        # recarga) y recharge_ más 10
-        return int(random.randint(self.recharge_, self.recharge_ + 10))
+        return f_p.recharge_dist(self.recharge_)
 
-    def unload(self, archivo):
+    @property
+    def speed(self):
+        return f_p.speed_dist(self.speed_)
+
+    def unload(self, filename):
         # simula la descarga del barco, espera según la carga que tiene
-        archivo.write(f"event;ES2;{self.ship_id};{self.actual_port};"
-                      f"{self.env.now}\n")
+        with open(filename) as file:
+            file.write(f"event;ES2;{self.ship_id};{self.actual_port};"
+                       f"{self.env.now}\n")
         print(f"Barco {self.ship_id} descargando...")
         yield self.env.timeout(self.recharge)
 
-    def drive(self, final_port, route, archivo, matriz_adyacencia):
+    def drive(self, final_port, route, filename, matriz_adyacencia):
         with route.resource.request() as request:
             print(f"{self.name} esperando...")
             wait_start = self.env.now
@@ -53,9 +55,10 @@ class Ship:
             while self.pos < route.dist:
                 self.pos += self.speed
                 pos_total = round(self.pos/route.dist, 2)
-                archivo.write(f"event;ES1;{self.ship_id};{self.actual_port}-"
-                              f"{final_port.port_id};{pos_total};"
-                              f"{self.env.now}\n")
+                with open(filename) as file:
+                    file.write(f"event;ES1;{self.ship_id};{self.actual_port}-"
+                               f"{final_port.port_id};{pos_total};"
+                               f"{self.env.now}\n")
                 print(f"{self.name}, ruta {route.route_id}, "
                       f"posicion: {self.pos}, "
                       f"tiempo simulacion {self.env.now}")
@@ -67,7 +70,7 @@ class Ship:
             self.total_wait_time_ports += self.env.now - wait_start
             self.pos = 0
             final_port.ships.append(self.ship_id)
-            yield self.env.process(self.unload(archivo))
+            yield self.env.process(self.unload(filename))
             final_port.ships.remove(self.ship_id)
 
 

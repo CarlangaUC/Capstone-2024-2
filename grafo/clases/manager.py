@@ -13,9 +13,9 @@ class Manager:
         self.ships = {}
         self.ports = {}
         self.routes = {}
-        self.archivo = open("archivo.txt", "w")
+        self.filename = "archivo.txt"
 
-    def search_route(self, actual_port_id, final_port, matriz_adyacencia):        
+    def search_route(self, actual_port_id, final_port, matriz_adyacencia):     
         N = len(matriz_adyacencia)
         costos = [float('inf')] * N
         costos[actual_port_id] = 0
@@ -59,7 +59,7 @@ class Manager:
             return None
         return ruta
 
-    def ship_event_loop(self, ship, events, archivo):
+    def ship_event_loop(self, ship, events):
         actual_port_id = ship.port_id
         events = ship.itinerary
         test = events
@@ -90,7 +90,7 @@ class Manager:
                         try:
                             yield self.env.process(
                                 ship.drive(final_port, route,
-                                           archivo, self.matrix)
+                                           self.filename, self.matrix)
                             )
                         except Exception as e:
                             print(f"Error durante el viaje: {e}")
@@ -119,8 +119,7 @@ class Manager:
     def processes(self):
         # Procesar cada barco con su itinerario asociado
         for ship_id, ship in self.ships.items():
-            self.env.process(self.ship_event_loop(ship, ship.itinerary,
-                                                  self.archivo))
+            self.env.process(self.ship_event_loop(ship, ship.itinerary))
 
     def run(self, until):
         self.env.run(until=until)
@@ -129,40 +128,6 @@ class Manager:
         while self.env.now < until:
             self.env.step()
             time.sleep(sleep_time)
-
-    # estas funciones generator son solo una forma "elegante" de cargar los
-    # .txt como instancias. NO tienen que ver con la simulación en simpy y
-    # no son tan importantes.
-    def ports_generator(self, ports_file):
-        with open(ports_file) as file:
-            file.readline()
-            for line in file:
-                data = line.strip().split(";")
-                yield Port(self.env, data[0],
-                           int(data[1]), int(data[2]))
-
-    def routes_generator(self, routes_file):
-        with open(routes_file) as file:
-            file.readline()
-            for line in file:
-                data = line.strip().split(";")
-                yield Route(self.env, int(data[0]), int(data[1]),
-                            int(data[2]), int(data[3]), float(data[4]),
-                            float(data[5]), float(data[6]))
-
-    def ships_generator(self, ships_file):
-        with open(ships_file) as file:
-            file.readline()
-            for line in file:
-                data = line.strip().split(";")
-                name = data[0]
-                speed = float(data[1])
-                port_id = int(data[2])
-                cycles = int(data[3])
-                recharge = int(data[4])
-                itinerary = list(map(int, data[5].split(",")))
-                yield Ship(self.env, name, speed, port_id,
-                           cycles, recharge, itinerary)
 
     def add_ports(self, ports_file):
         for i, port in enumerate(self.ports_generator(ports_file)):
@@ -225,3 +190,38 @@ class Manager:
         for route in self.routes.values():
             archivo.write(f"route;{route.initial_port_id}-"
                           f"{route.final_port_id};1\n")
+
+
+    # estas funciones generator son solo una forma "elegante" de cargar los
+    # .txt como instancias. NO tienen que ver con la simulación en simpy y
+    # no son tan importantes.
+    def ports_generator(self, ports_file):
+        with open(ports_file) as file:
+            file.readline()
+            for line in file:
+                data = line.strip().split(";")
+                yield Port(self.env, data[0],
+                           int(data[1]), int(data[2]))
+
+    def routes_generator(self, routes_file):
+        with open(routes_file) as file:
+            file.readline()
+            for line in file:
+                data = line.strip().split(";")
+                yield Route(self.env, int(data[0]), int(data[1]),
+                            int(data[2]), int(data[3]), float(data[4]),
+                            float(data[5]), float(data[6]))
+
+    def ships_generator(self, ships_file):
+        with open(ships_file) as file:
+            file.readline()
+            for line in file:
+                data = line.strip().split(";")
+                name = data[0]
+                speed = float(data[1])
+                port_id = int(data[2])
+                cycles = int(data[3])
+                recharge = int(data[4])
+                itinerary = list(map(int, data[5].split(",")))
+                yield Ship(self.env, name, speed, port_id,
+                           cycles, recharge, itinerary)
