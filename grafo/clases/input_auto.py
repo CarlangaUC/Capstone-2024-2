@@ -156,7 +156,7 @@ def gen_route(env, used_routes):
     Output:
     routes      -> Diccionario del estilo {id:<class Port>}
     """
-
+    print(used_routes)
     routes = {}
     used_routes = list(used_routes)
     for route in used_routes:
@@ -198,7 +198,7 @@ def gen_recharge():
     return int(random.uniform(1, 20))
 
 
-def gen_dist():
+def gen_dist(route, used_routes):
     return random.uniform(45, 50)
 
 

@@ -1,4 +1,4 @@
-import func_params as f_p
+import clases.func_params as f_p
 import simpy
 
 
@@ -47,6 +47,7 @@ class Ship:
         yield self.env.timeout(self.recharge)
 
     def drive(self, final_port, route, filename, matriz_adyacencia):
+        print(filename)
         with route.resource.request() as request:
             print(f"{self.name} esperando...")
             wait_start = self.env.now
@@ -55,7 +56,7 @@ class Ship:
             while self.pos < route.dist:
                 self.pos += self.speed
                 pos_total = round(self.pos/route.dist, 2)
-                with open(filename) as file:
+                with open(filename,"w") as file:
                     file.write(f"event;ES1;{self.ship_id};{self.actual_port}-"
                                f"{final_port.port_id};{pos_total};"
                                f"{self.env.now}\n")

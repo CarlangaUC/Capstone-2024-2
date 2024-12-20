@@ -1,6 +1,6 @@
 from clases.input_auto import generate_agents
 from clases.agentes import Ship, Port, Route
-import func_params as f_p
+import clases.func_params as f_p
 import simpy
 import heapq
 import time
@@ -95,7 +95,6 @@ class Manager:
                         except Exception as e:
                             print(f"Error durante el viaje: {e}")
                             route.ships.remove(ship.ship_id)
-                            continue
                         route.ships.remove(ship.ship_id)
                         actual_port_id = final_port_id
                         ship.actual_port = final_port_id
