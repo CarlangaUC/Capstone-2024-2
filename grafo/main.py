@@ -7,8 +7,6 @@ manager = Manager()
 ############### Input automatico ###########
 
 """ Observaciones:
-    - Pendiente arreglar tema de distancias de rutas respeten
-      la desigualdad triangular
     - No funciona calculate metrics en este caso
 """
 
@@ -16,7 +14,7 @@ n_ports = 5
 manager.add(n_ports=n_ports)
 
 manager.processes()
-manager.step_run(1,sleep_time=0)
+manager.step_run(20,sleep_time=0)
 
 
 
