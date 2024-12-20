@@ -1,4 +1,5 @@
 from clases.agentes import Ship, Port, Route
+import numpy as np
 import random
 import math
 
@@ -156,13 +157,15 @@ def gen_route(env, used_routes):
     Output:
     routes      -> Diccionario del estilo {id:<class Port>}
     """
-    print(used_routes)
     routes = {}
+    distances = gram_matrix(len(used_routes),2)
     used_routes = list(used_routes)
     for route in used_routes:
         initial_port_id = route[0]
         final_port_id = route[1]
-        dist = gen_dist(route, used_routes)
+        # Para asegurar que las distancias respeten la desigualdad triangular
+        dist = distances[initial_port_id,final_port_id]
+        # dist = gen_dist(route, used_routes)
         capacity = gen_capacity_route()
         weather = gen_weather()
         security = gen_security()
@@ -201,6 +204,12 @@ def gen_recharge():
 def gen_dist(route, used_routes):
     return random.uniform(45, 50)
 
+def gram_matrix(size, weight):
+    # Generar una matriz de gram la cual cada entrada cumple que es un
+    # producto interno por lo tanto cumple la desigualdad triangular 
+    A = np.random.rand(size, size)*weight
+    B = np.dot(A, A.transpose())
+    return B
 
 def gen_capacity_route():
     return random.randint(50, 100)

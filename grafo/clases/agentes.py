@@ -47,7 +47,7 @@ class Ship:
         yield self.env.timeout(self.recharge)
 
     def drive(self, final_port, route, filename, matriz_adyacencia):
-        print(filename)
+        # print(filename)
         with route.resource.request() as request:
             print(f"{self.name} esperando...")
             wait_start = self.env.now
@@ -65,7 +65,7 @@ class Ship:
                       f"tiempo simulacion {self.env.now}")
                 yield self.env.timeout(f_p.UNIT_TIME)
         with final_port.resource.request() as request:
-            print(f"{self.name} esperando...")
+            # print(f"{self.name} esperando...")
             wait_start = self.env.now
             yield request
             self.total_wait_time_ports += self.env.now - wait_start
