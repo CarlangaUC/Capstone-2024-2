@@ -17,16 +17,3 @@ manager.processes()
 manager.step_run(20,sleep_time=0)
 
 
-
-
-# manager.calculate_metrics()
-
-################ Input con formato texto #############
-# input_file= ["ports.txt", "routes.txt", "ships.txt"]
-
-# manager.add(input_file = input_file)
-
-# manager.processes()
-# manager.run(100)
-
-# manager.calculate_metrics()
