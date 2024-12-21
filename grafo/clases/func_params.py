@@ -4,6 +4,7 @@ UNIT_TIME = 1
 WEATHER_FACT = 1
 SECURITY_FACT = 1
 REGULATIONS_FACT = 1
+FILE_NAME = "archivo.txt"
 
 
 def recharge_dist(recharge):

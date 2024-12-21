@@ -13,7 +13,7 @@ class Manager:
         self.ships = {}
         self.ports = {}
         self.routes = {}
-        self.filename = "archivo.txt"
+        self.filename = f_p.FILE_NAME
 
     def search_route(self, actual_port_id, final_port, matriz_adyacencia):
         N = len(matriz_adyacencia)
