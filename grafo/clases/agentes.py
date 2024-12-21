@@ -40,7 +40,7 @@ class Ship:
 
     def unload(self, filename):
         # simula la descarga del barco, espera según la carga que tiene
-        with open(filename) as file:
+        with open(filename, "a") as file:
             file.write(f"event;ES2;{self.ship_id};{self.actual_port};"
                        f"{self.env.now}\n")
         print(f"Barco {self.ship_id} descargando...")
@@ -56,7 +56,7 @@ class Ship:
             while self.pos < route.dist:
                 self.pos += self.speed
                 pos_total = round(self.pos/route.dist, 2)
-                with open(filename,"w") as file:
+                with open(filename, "a") as file:
                     file.write(f"event;ES1;{self.ship_id};{self.actual_port}-"
                                f"{final_port.port_id};{pos_total};"
                                f"{self.env.now}\n")

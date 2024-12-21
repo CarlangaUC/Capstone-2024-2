@@ -15,7 +15,7 @@ class Manager:
         self.routes = {}
         self.filename = "archivo.txt"
 
-    def search_route(self, actual_port_id, final_port, matriz_adyacencia):     
+    def search_route(self, actual_port_id, final_port, matriz_adyacencia):
         N = len(matriz_adyacencia)
         costos = [float('inf')] * N
         costos[actual_port_id] = 0
@@ -160,7 +160,7 @@ class Manager:
             self.add_ports(ports_file)
             self.add_routes(routes_file)
             self.add_ships(ships_file)
-            self.output(self.archivo)
+            self.output()
 
     def calculate_metrics(self):
 
@@ -180,16 +180,16 @@ class Manager:
         print(f"Tiempo promedio de espera en puertos: "
               f"{avg_wait_time_ports:.2f} unidades de tiempo\n")
 
-    def output(self, archivo):
-        for ship in self.ships.values():
-            archivo.write(f"ship;{ship.ship_id};{ship.name};"
-                          f"{ship.itinerary[0]};{ship.speed};0.0\n")
-        for port in self.ports.values():
-            archivo.write(f"port;{port.port_id};{port.name}\n")
-        for route in self.routes.values():
-            archivo.write(f"route;{route.initial_port_id}-"
-                          f"{route.final_port_id};1\n")
-
+    def output(self):
+        with open(self.filename, "a") as file:
+            for ship in self.ships.values():
+                file.write(f"ship;{ship.ship_id};{ship.name};"
+                           f"{ship.itinerary[0]};{ship.speed};0.0\n")
+            for port in self.ports.values():
+                file.write(f"port;{port.port_id};{port.name}\n")
+            for route in self.routes.values():
+                file.write(f"route;{route.initial_port_id}-"
+                           f"{route.final_port_id};1\n")
 
     # estas funciones generator son solo una forma "elegante" de cargar los
     # .txt como instancias. NO tienen que ver con la simulación en simpy y
