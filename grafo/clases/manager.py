@@ -144,7 +144,7 @@ class Manager:
 
     def add(self, n_ports=None, input_file=None):
         if input_file is None:
-            ports, routes, ships, matrix = generate_agents(self.env, n_ports)
+            ports, routes, ships, matrix = generate_agents(self.env, n_ports, True)
 
             self.ports = ports
             self.routes = routes

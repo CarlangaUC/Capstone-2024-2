@@ -10,10 +10,12 @@ manager = Manager()
     - No funciona calculate metrics en este caso
 """
 
-n_ports = 5
+n_ports = 2
 manager.add(n_ports=n_ports)
 
+
 manager.processes()
-manager.step_run(20,sleep_time=0)
+manager.step_run(2000,sleep_time=0)
 
 
+# RUTAS NO TIENE EL ATRIBUTO DE CAPACITY ??? PORQUEE

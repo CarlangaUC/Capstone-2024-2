@@ -2,9 +2,9 @@ from clases.agentes import Ship, Port, Route
 import numpy as np
 import random
 import math
-
-
-def generate_agents(env, num_ports):
+from geopy.distance import geodesic 
+ 
+def generate_agents(env, num_ports, debug=False):
     """
     Input:
     env       -> Entorno de simpy
@@ -38,8 +38,31 @@ def generate_agents(env, num_ports):
 
     matrix = gen_matrix(num_ports, routes)
 
-    return ports, routes, ships, matrix
+    if debug:
+        if num_ports <4:
+            with open('debug.txt', 'w') as debugg:
+                debugg.write(f"BARCOS GENERADOS:{num_ships}\nRUTAS GENERADOS: {len(all_route)}\n")
 
+                debugg.write("BARCOS\n")
+                for id in ships:
+                    ship =ships[id]
+                    debugg.write(f"Nombre: {ship.name}, Velocidad: {ship.speed}, ID del Puerto: {ship.port_id}, "
+          f"Ciclos: {ship.cycles}, Recarga: {ship.recharge}, Itinerario: {ship.itinerary}\n")
+
+                debugg.write("RUTAS\n")
+                for id in routes:
+                    route = routes[id]
+                    debugg.write(f"Puerto Inicial: {route.initial_port_id}, Puerto Final: {route.final_port_id}, "
+          f"Distancia: {route.dist}, "
+          f"Clima: {route.weather}, Seguridad: {route.security}, "
+          f"Regulaciones: {route.regulations}\n")
+
+                debugg.write("Puertos\n")
+                for id in ports:
+                    port = ports[id]
+                    debugg.write(f"Puerto: {port.name}; Capacidad: {port.capacity}, port:{port.port_id}\n") 
+
+    return ports, routes, ships, matrix
 
 def gen_ports(env, num_ports):
     """
@@ -61,7 +84,6 @@ def gen_ports(env, num_ports):
         global_capacity += capacity
         ports[port] = Port(env, name, capacity, port)
     return ports, global_capacity
-
 
 def all_routes(num_ports):
     """
@@ -88,7 +110,6 @@ def all_routes(num_ports):
                     all_routes[i].append(route)
     return all_routes
 
-
 def gen_ships(env, num_ships, num_ports, all_routes):
     """
     Input:
@@ -107,25 +128,24 @@ def gen_ships(env, num_ships, num_ports, all_routes):
     for ship in range(0, num_ships):
 
         # Generamos un largo del itinerario aleatorio
-        num_tasks = random.randint(1, 20)
+        num_tasks = random.randint(2, 20)
         name = f"Barco {ship}"
         speed = gen_velocity()
         # Generamos un puerto del id aleatorio
         port_id = random.randint(0, num_ports-1)
         recharge = gen_recharge()
-        # Generamos el itinerario y las rutas que se usaran
-        itinerary, used_routes = gen_itinerary(num_tasks, port_id,
-                                               all_routes, used_routes)
         # Probabilidad 0.5 de itinerario cíclico
         cycles = random.random() < 0.5
+        # Generamos el itinerario y las rutas que se usaran
+        itinerary, used_routes = gen_itinerary(num_tasks, port_id,
+                                               all_routes, used_routes,cycles)
         # Guardar la clase Ship en el diccionario con su id
         ships[ship] = Ship(env, name, speed, port_id,
                            cycles, recharge, itinerary)
 
     return ships, used_routes
 
-
-def gen_itinerary(num_tasks, port_id, all_routes, used_routes):
+def gen_itinerary(num_tasks, port_id, all_routes, used_routes,cycles):
     """
     Input:
     num_tasks   -> Largo del itinerario
@@ -146,8 +166,20 @@ def gen_itinerary(num_tasks, port_id, all_routes, used_routes):
         itinerary.append(next_port_id)
         port_id = next_port_id
 
-    return itinerary, used_routes
+    # Si un barco ciclico va al puerto x en su ultimo viaje
+    # no queremos que en el siguiente tiempo vaya denuevo al puerto x,
+    # sino a uno distinto!, se agrega un puerto mas a su itinerario 
+    # por simplicidad
+    if itinerary[0] == itinerary[-1] and cycles==True:
+        next_route = random.choice(all_routes[port_id])
+        used_routes.add(next_route)
+        next_port_id = next_route[1]
+        itinerary.append(next_port_id)
+        port_id = next_port_id
 
+
+
+    return itinerary, used_routes
 
 def gen_route(env, used_routes):
     """
@@ -158,25 +190,55 @@ def gen_route(env, used_routes):
     routes      -> Diccionario del estilo {id:<class Port>}
     """
     routes = {}
-    distances = gram_matrix(len(used_routes),2)
     used_routes = list(used_routes)
+    done = set()
+    sample_points = {}
     for route in used_routes:
         initial_port_id = route[0]
         final_port_id = route[1]
-        # Para asegurar que las distancias respeten la desigualdad triangular
-        dist = distances[initial_port_id,final_port_id]
-        # dist = gen_dist(route, used_routes)
+        other_route = f"{final_port_id}-{initial_port_id}"
+        route_name = f"{initial_port_id}-{final_port_id}"
+
+        # Cumpla la simetria
+        if other_route in done:
+            dist = routes[other_route].dist
+        else:
+            done.add(route_name)
+            dist,sample_points = gen_dist(initial_port_id,final_port_id,sample_points)
         capacity = gen_capacity_route()
         weather = gen_weather()
         security = gen_security()
         regulations = gen_regulations()
-        route_name = f"{initial_port_id}-{final_port_id}"
         routes[route_name] = Route(env, initial_port_id, final_port_id, dist,
                                    capacity, weather, security, regulations)
-
+        
+    for route in routes:
+        print(f"{route}: {routes[route].dist}")
     return routes
 
+def gen_random_point():
+    latitude = random.uniform(-90, 90)
+    longitude = random.uniform(-180, 180)
+    return latitude, longitude
 
+def gen_dist(id_in,id_out,sample_points):
+    while id_in not in sample_points:
+        lat, lon = gen_random_point()
+        p1 = (lat, lon)
+        if p1 not in list(sample_points.values()):
+            sample_points[id_in] = p1
+
+    while id_out not in sample_points:
+        lat, lon = gen_random_point()
+        p2 = (lat, lon)
+        if p2 not in list(sample_points.values()):
+            sample_points[id_out] = p2
+    
+    p1 = sample_points[id_in]
+    p2 = sample_points[id_out]
+
+    return geodesic(p1,p2).km, sample_points
+    
 def gen_matrix(num_ports, routes):
     """
     Input:
@@ -192,36 +254,20 @@ def gen_matrix(num_ports, routes):
         matrix[routes[route].initial_port_id][routes[route].final_port_id] = route
     return matrix
 
-
 def gen_velocity():
-    return int(random.uniform(1, 5))
-
+    return int(random.uniform(30, 100))
 
 def gen_recharge():
     return int(random.uniform(1, 20))
 
-
-def gen_dist(route, used_routes):
-    return random.uniform(45, 50)
-
-def gram_matrix(size, weight):
-    # Generar una matriz de gram la cual cada entrada cumple que es un
-    # producto interno por lo tanto cumple la desigualdad triangular 
-    A = np.random.rand(size, size)*weight
-    B = np.dot(A, A.transpose())
-    return B
-
 def gen_capacity_route():
     return random.randint(50, 100)
-
 
 def gen_weather():
     return random.randint(0, 100)
 
-
 def gen_security():
     return random.randint(0, 100)
-
 
 def gen_regulations():
     return random.randint(0, 100)

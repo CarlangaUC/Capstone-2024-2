@@ -1,5 +1,4 @@
 def load_simulation(path, debug=False):
-
     """
 
     Funcion que se encarga de leer el input.txt y retornar la informacion

@@ -16,12 +16,10 @@ class Visual():
         self.date = datetime(2017, 6, 1)
     
     def add_port(self, port):
-
         # Añadir Puertos dado el diccionario
         self.ports[port["id"]]=port
 
     def add_route(self, route):
-
         """
         Esta funciion carga la info de las rutas a la clase
         ademas dada las coordenadas de sus respectivos puertos
@@ -74,7 +72,6 @@ class Visual():
         self.add_feature(locations) 
 
     def add_time(self, time):
-        
         """
         Se maneja el tema del tiempo, esta hecho para trabajar en dias
         pero se puede modificar y generalizar
@@ -97,7 +94,6 @@ class Visual():
             self.time.append(current_date.strftime("%Y-%m-%dT00:00:00"))            
 
     def get_locations(self, route):
-
         """
         Input: 
         route -> Diccionario con info de una ruta
@@ -120,7 +116,6 @@ class Visual():
         return origin, destination
 
     def get_shortest_path(self, origin, destination):
-
         """
         Funcion que retorna una lista de puntos de la ruta mas corta
         
@@ -155,7 +150,6 @@ class Visual():
         return route_folium
 
     def add_markers(self):
-
         """
 
         Añade marcadores a entidades estaticas en el mapa
@@ -190,7 +184,6 @@ class Visual():
 
 
     def add_feature(self, info):
-
         """
 
         Funcion que añade un objeto llamado feature (caracteristicas)
@@ -225,7 +218,6 @@ class Visual():
         self.features.append(feature)
 
     def run(self):
-
         """
 
         Se agrega todas las caracteristicas finales al mapa
@@ -261,13 +253,11 @@ class Visual():
         
         
     def save_map(self):
-
         # Guarda el mapa en un archivo html
 
         self.map.save(f"{self.output_path}.html")
 
 def create_simulation(ships, ports, routes, time, type, output_path):
-
     """
 
     Esta funcion se encarga de inicializar la clase visual 
