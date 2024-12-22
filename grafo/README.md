@@ -7,9 +7,15 @@
 - main.py : instrucciones, parametros. | Carlos
 - visual.py : explicar visualizacion actual, instrucciones. | Basti
 
-# Título del Proyecto
+# Simulacion Maritima 
 
-_Acá va un párrafo que describa lo que es el proyecto_
+Integrantes: - Clemente Campos
+             - Carlos Olguin
+             - Felipe Cox
+             - Daniel Hidalgo
+             - Bastian Cortés
+
+Descripción: El siguiente repo contiene instrucciones y documentacion en torno a la solución planteada por el equipo en torno a la problematica de tener un simulador maritimo, para esto fue documentado los archivos necesarios en conjunto a todo lo necesario para entender el como se corre el codigo y su funcionamiento.
 
 ## Contexto
 
@@ -136,7 +142,7 @@ ship;nombre;posicion en tiempo t;puerto inicial;puerto final;ID_Barco;ID_ruta
 se obtienen los agentes y se ejecuta la visualización con la funcción create_simulation.
 
 
-
+### Ejecución 📋
 
 
 
