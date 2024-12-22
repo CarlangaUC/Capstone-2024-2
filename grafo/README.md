@@ -11,9 +11,15 @@
 
 _Acá va un párrafo que describa lo que es el proyecto_
 
-## Comenzando 🚀
+## Contexto
 
-_Estas instrucciones te permitirán obtener una copia del proyecto en funcionamiento en tu máquina local para propósitos de desarrollo y pruebas._
+Este proyecto emplea como base para la modelación del comercio marítimo internacional tanto el paradigma de simulación basada en agentes
+como el paradigma de simulación de eventos discretos. Hemos diseñado tres clases diferentes para simular los barcos, puertos y rutas, que
+son los agentes clave en la simulación, y hemos utilizado SimPy, que es una librería de Python que nos permitió simular eventos en tiempo
+discreto. Con esta librería creamos una simulación del comercio marítimo internacional con un enfoque que permite representar cada 
+barco, puerto y ruta como agentes con comportamientos y características definidas, que interactúan en un entorno dinámico. La simulación
+captura eventos clave del comercio marítimo como el movimiento de los barcos entre los distintos puertos, además del cierre y apertura 
+temporal de puertos y de rutas, con las respectivas consecuencias que generan dichos eventos en la simulación. 
 
 Mira **Deployment** para conocer como desplegar el proyecto.
 
