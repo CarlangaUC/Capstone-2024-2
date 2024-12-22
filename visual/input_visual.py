@@ -1,6 +1,26 @@
-# Este archivo leera el input.txt y retornara diccionarios
-# con la informacion de la simulacion en cada tiempo t
-def load_simulation(path,debug=False):
+def load_simulation(path, debug=False):
+
+    """
+
+    Funcion que se encarga de leer el input.txt y retornar la informacion
+    de los agentes de la simulacion para la visualizacion
+
+    Importante notar que no esta asociado a la simulacion de grafos
+    tiene su propio formato
+
+    Input: 
+
+    path -> string de la ruta del input.txt
+
+
+    Output:
+
+    ships  -> Diccionario con info de los barcos
+    ports  -> Diccionario con info de los puertos 
+    routes -> Diccionario con info de los rutas 
+    
+    """
+
     ports = {}
     ships = {}
     routes = {}
@@ -41,4 +61,3 @@ def load_simulation(path,debug=False):
         print(f"En esta simulacion se cargaron lo siguiente:\nBarcos: {ships}\nPuertos: {ports}\nRutas:{routes}")
         print(f"Los id:\nBarcos: {list(ships.keys())}\nPuertos: {list(ports.keys())}\nRutas:{list(routes.keys())}")
     return ships,ports,routes
-
