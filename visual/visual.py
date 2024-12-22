@@ -159,6 +159,7 @@ class Visual():
         
         """
         # Añade marcadores a las entidades " estaticas " (las que no se muevan)
+        # osea a los puertos en este caso
 
         for port in self.ports:
             name     = self.ports[port]["name"]

@@ -75,18 +75,12 @@ retorna la distancia geodesica utilizando la libreria geopy
 - gen_matrix: Dado el numero de puertos y clases de rutas se genera la matriz de adyacencia de la simulacion
 la cual tendra las distancias de las rutas
 
-
 - Otros: También hay otras funciones como [gen_velocity](/grafo/clases/input_auto.py#L257) las cuales están pensadas para agregar mayor dinamica o funcionamineto
 al código, se ubican al final del código del archivo.
 
-
-
-
-
-
-
-
 ### Visualización 🗺️
+
+![](/visual/simulation.gif)
 
 En la carpeta [visual](/visual) se encuentran todas los archivos 
 correspondientes al apartado visual de esta simulación
@@ -97,9 +91,48 @@ si así lo desean adaptando el output de la simulación que ellos generen y esca
 
 Funcionamiento de la visualización: Se compone principalmente de 3 archivos
 
-- [input_visual.py](/visual/input_visual.py)
-- [visual.py](/visual/visual.py)
-- [run.py](/visual/run.py)
+- [input_visual.py](/visual/input_visual.py): En este archivo se encuentra la función [load_simulation](/visual/input_visual.py#L1) que carga
+un archivo.txt, el archivo.txt que maneja tiene el siguiente formato
+    - Se ha implementado el movimineto de los barcos, la función load_simulation es independiente
+    de t, las lineas que contienen t son para mejor entendimiento del input.
+
+```
+t=0
+port;nombre;[lat, lon];estado;ID_Puerto
+ship;nombre;posición inicial;puerto inicial;puerto final;ID_Barco;ID_ruta
+routes;ID_puerto_1;ID_puerto_2;ID_ruta
+t>0
+ship;nombre;posicion en tiempo t;puerto inicial;puerto final;ID_Barco;ID_ruta
+```
+
+- [visual.py](/visual/visual.py): Este archivo contiene una función importante y una clase
+    
+    - [Visual](/visual/visual.py#L6): Clase la cual se encarga de manejar todo el aspecto visual 
+    con las librerias [folium](https://python-visualization.github.io/folium/latest/) y [searoute](https://pypi.org/project/searoute/), los metodos principales de esta clase son:
+         
+        - [get_shortest_path](/visual/visual.py#L118): En esta función se utiliza la libreria de searoute, en particular la función searoute la cual recibe las coordenadas de dos puntos de la tierra y retorna una objeto especial con la informacion de la ruta mas corta maritima del cual extraemos una lista de las coordenadas de esta ruta, además añadimos
+        al mapa (esta en el atributo self.map, objeto de folium) una interpolación de esta ruta
+        
+        - [add_feature](/visual/visual.py#L186): recibe la infromacion de un objeto que tenga
+        movimiento y lo agrega a la lista self.features, se podrian agregar mas entidades
+        con movimiento usando esta función, para este proyecto solamente maneja el movimiento de los barcos
+        
+        - [run](/visual/visual.py#L220): En esta función se añaden los marcadores (los iconos
+        de los puertos en este proyecto) con la función self.add_markers, además se utiliza el
+        plugin de folium TimestampedGeoJson el cual es el encargado de manejar el movimiento de 
+        los barcos en la visualización.
+
+    - [create_simulation](/visual/visual.py#L260): Recibe diccionarios con la informacion de los
+    el tiempo de la simulación (cuantos intervalos se van a realizar), tipo de mapa, y
+    una ruta de donde se guardara el archivo .html. En esta función se crea la instancia
+    Map de folium, la cual es la que posee el mapa que se vera en la visualización, 
+    inicializamos la clase Visual, añadimos la información de los agentes a la clase
+    y luego ejecutamos metodos de la clase para hacer que todo funcione y retornar la output .html.
+
+
+- [run.py](/visual/run.py): En este archivo se ejecuta la visualización, se crean los parametros,
+se obtienen los agentes y se ejecuta la visualización con la funcción create_simulation.
+
 
 
 
