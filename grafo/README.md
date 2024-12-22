@@ -9,13 +9,16 @@
 
 # Simulacion Maritima 
 
-Integrantes: - Clemente Campos
-             - Carlos Olguin
-             - Felipe Cox
-             - Daniel Hidalgo
-             - Bastian Cortés
+**Integrantes del equipo**:
 
-Descripción: El siguiente repo contiene instrucciones y documentacion en torno a la solución planteada por el equipo en torno a la problematica de tener un simulador maritimo, para esto fue documentado los archivos necesarios en conjunto a todo lo necesario para entender el como se corre el codigo y su funcionamiento.
+- **Clemente Campos**
+- **Carlos Olguín**
+- **Felipe Cox**
+- **Daniel Hidalgo**
+- **Bastián Cortés**
+
+
+**Descripción**: El siguiente repo contiene instrucciones y documentacion en torno a la solución planteada por el equipo en torno a la problematica de tener un simulador maritimo, para esto fue documentado los archivos necesarios en conjunto a todo lo necesario para entender el como se corre el codigo y su funcionamiento.
 
 ## Contexto
 
