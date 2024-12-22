@@ -1,0 +1,110 @@
+t=0
+port;ningbo zhoushan;[30.00619361706247, 122.10505483288877];True;p1
+port;shangai;[30.62714873184947, 122.06310305027806];False;p4
+port;rotterdam;[51.94974625239741, 4.145284454152448];True;p2
+port;Durban;[-29.875592874538864, 31.05772432005166];True;p3
+port;Hamburgo;[53.51832287923247, 9.966247093448443];False;p5
+port;Calcuta;[22.54633931812557, 88.31516388111436];True;p6
+ship;Barco A;0.0;shangai;rotterdam;s1;r1
+ship;Barco B;0.1;Durban;Calcuta;s2;r2
+ship;Barco C;0.2;rotterdam;Durban;s3;r3
+ship;Barco D;0.3;Durban;shangai;s4;r4
+routes;p1;p2;r1
+routes;p3;p6;r2
+routes;p2;p3;r3
+routes;p3;p1;r4
+t=1
+ship;Barco A;0.0;shangai;rotterdam;s1;r1
+ship;Barco B;0.1;shangai;Durban;s2;r2
+ship;Barco C;0.2;rotterdam;Durban;s3;r3
+ship;Barco D;0.3;Durban;shangai;s4;r4
+t=2
+ship;Barco A;0.04;shangai;rotterdam;s1;r1
+ship;Barco B;0.14;shangai;Durban;s2;r2
+ship;Barco C;0.24;rotterdam;Durban;s3;r3
+ship;Barco D;0.34;Durban;shangai;s4;r4
+t=2
+ship;Barco A;0.08;shangai;rotterdam;s1;r1
+ship;Barco B;0.18;shangai;Durban;s2;r2
+ship;Barco C;0.28;rotterdam;Durban;s3;r3
+ship;Barco D;0.38;Durban;shangai;s4;r4
+t=3
+ship;Barco A;0.12;shangai;rotterdam;s1;r1
+ship;Barco B;0.22;shangai;Durban;s2;r2
+ship;Barco C;0.32;rotterdam;Durban;s3;r3
+ship;Barco D;0.42;Durban;shangai;s4;r4
+t=4
+ship;Barco A;0.16;shangai;rotterdam;s1;r1
+ship;Barco B;0.26;shangai;Durban;s2;r2
+ship;Barco C;0.36;rotterdam;Durban;s3;r3
+ship;Barco D;0.46;Durban;shangai;s4;r4
+t=5
+ship;Barco A;0.20;shangai;rotterdam;s1;r1
+ship;Barco B;0.30;shangai;Durban;s2;r2
+ship;Barco C;0.40;rotterdam;Durban;s3;r3
+ship;Barco D;0.50;Durban;shangai;s4;r4
+t=6
+ship;Barco A;0.24;shangai;rotterdam;s1;r1
+ship;Barco B;0.34;shangai;Durban;s2;r2
+ship;Barco C;0.44;rotterdam;Durban;s3;r3
+ship;Barco D;0.54;Durban;shangai;s4;r4
+t=7
+ship;Barco A;0.28;shangai;rotterdam;s1;r1
+ship;Barco B;0.38;shangai;Durban;s2;r2
+ship;Barco C;0.48;rotterdam;Durban;s3;r3
+ship;Barco D;0.58;Durban;shangai;s4;r4
+t=8
+ship;Barco A;0.32;shangai;rotterdam;s1;r1
+ship;Barco B;0.42;shangai;Durban;s2;r2
+ship;Barco C;0.52;rotterdam;Durban;s3;r3
+ship;Barco D;0.62;Durban;shangai;s4;r4
+t=9
+ship;Barco A;0.36;shangai;rotterdam;s1;r1
+ship;Barco B;0.46;shangai;Durban;s2;r2
+ship;Barco C;0.56;rotterdam;Durban;s3;r3
+ship;Barco D;0.66;Durban;shangai;s4;r4
+t=10
+ship;Barco A;0.40;shangai;rotterdam;s1;r1
+ship;Barco B;0.50;shangai;Durban;s2;r2
+ship;Barco C;0.60;rotterdam;Durban;s3;r3
+ship;Barco D;0.70;Durban;shangai;s4;r4
+t=11
+ship;Barco A;0.44;shangai;rotterdam;s1;r1
+ship;Barco B;0.54;shangai;Durban;s2;r2
+ship;Barco C;0.64;rotterdam;Durban;s3;r3
+ship;Barco D;0.74;Durban;shangai;s4;r4
+t=12
+ship;Barco A;0.48;shangai;rotterdam;s1;r1
+ship;Barco B;0.58;shangai;Durban;s2;r2
+ship;Barco C;0.68;rotterdam;Durban;s3;r3
+ship;Barco D;0.78;Durban;shangai;s4;r4
+t=13
+ship;Barco A;0.52;shangai;rotterdam;s1;r1
+ship;Barco B;0.62;shangai;Durban;s2;r2
+ship;Barco C;0.72;rotterdam;Durban;s3;r3
+ship;Barco D;0.82;Durban;shangai;s4;r4
+t=14
+ship;Barco A;0.56;shangai;rotterdam;s1;r1
+ship;Barco B;0.66;shangai;Durban;s2;r2
+ship;Barco C;0.76;rotterdam;Durban;s3;r3
+ship;Barco D;0.86;Durban;shangai;s4;r4
+t=15
+ship;Barco A;0.60;shangai;rotterdam;s1;r1
+ship;Barco B;0.70;shangai;Durban;s2;r2
+ship;Barco C;0.80;rotterdam;Durban;s3;r3
+ship;Barco D;0.90;Durban;shangai;s4;r4
+t=16
+ship;Barco A;0.64;shangai;rotterdam;s1;r1
+ship;Barco B;0.74;shangai;Durban;s2;r2
+ship;Barco C;0.84;rotterdam;Durban;s3;r3
+ship;Barco D;0.94;Durban;shangai;s4;r4
+t=17
+ship;Barco A;0.68;shangai;rotterdam;s1;r1
+ship;Barco B;0.78;shangai;Durban;s2;r2
+ship;Barco C;0.88;rotterdam;Durban;s3;r3
+ship;Barco D;0.98;Durban;shangai;s4;r4
+t=18
+ship;Barco A;0.68;shangai;rotterdam;s1;r1
+ship;Barco B;0.78;shangai;Durban;s2;r2
+ship;Barco C;0.88;rotterdam;Durban;s3;r3
+ship;Barco D;0.98;Durban;shangai;s4;r4

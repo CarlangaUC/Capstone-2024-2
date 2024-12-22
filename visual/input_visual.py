@@ -41,3 +41,4 @@ def load_simulation(path,debug=False):
         print(f"En esta simulacion se cargaron lo siguiente:\nBarcos: {ships}\nPuertos: {ports}\nRutas:{routes}")
         print(f"Los id:\nBarcos: {list(ships.keys())}\nPuertos: {list(ports.keys())}\nRutas:{list(routes.keys())}")
     return ships,ports,routes
+

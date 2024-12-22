@@ -1,8 +1,7 @@
-# https://pypi.org/project/searoute/
 import searoute as sr
 import folium
 import folium.plugins as plugins
-from input_handler import load_simulation
+from datetime import datetime,timedelta  
 
 
 class Visual():
@@ -13,6 +12,8 @@ class Visual():
         self.routes = {}
         self.ports = {}
         self.ships ={}
+        self.simulation_name = "test"
+        self.date = datetime(2017, 6, 1)
 
     # Estas funciones añaden la info a la clase
     
@@ -20,9 +21,15 @@ class Visual():
     def add_port(self,port):
         self.ports[port["id"]]=port
 
+
     ## Añadimos rutas
     def add_route(self,route):
-        self.routes[route["id"]]=route
+        id = route["id"]
+        ruta = {}        
+        origin,destination = self.get_locations(route)
+        path = self.get_shortest_path(origin,destination)
+        ruta = {"port_1":route["puerto_1"],"port_2":route["puerto_2"],"path":path}
+        self.routes[id]=ruta
 
     ## Añadir Barcos 
     # Aca en particular en los barcos calculamos la ruta mas
@@ -31,10 +38,10 @@ class Visual():
     # la variable locations
 
     def add_ship(self,ship):
+        id_route = ship["route"]
         index = []
         self.ships[ship["id"]] = ship
-        origin, destination = self.get_locations(self.routes[ship["route"]])
-        path = self.get_shortest_path(origin,destination)
+        path = self.routes[id_route]["path"]
         for progress in ship["progress"]:
            index.append(int(progress*len(path)))
         locations = [path[i] for i in index]
@@ -44,11 +51,11 @@ class Visual():
         # a la funcion feature
         self.add_feature(locations) 
 
-    # Añadimos un manejo del tiempo, se guardara  en 
-    # en una lista 
+    # Añadimos un manejo del tiempo, se guardara en una lista 
     def add_time(self,time):
         for t in range(0,time):
-            self.time.append(f"2017-06-02T00:{t:02d}:00")
+            current_date = self.date + timedelta(days=t)
+            self.time.append(current_date.strftime("%Y-%m-%dT00:00:00"))            
 
     # Funcion que obtiene las coordenadas de los puertos de interes de una
     # ruta 
@@ -75,11 +82,12 @@ class Visual():
 
 
         # folium.PolyLine(route_folium, tooltip="Coast").add_to(self.map)
-        plugins.AntPath(reverse="True", locations = route_folium,dash_array=[20,30]).add_to(self.map)
+        plugins.AntPath(reverse="False", locations = route_folium,dash_array=[20,30],color="blue"   
+).add_to(self.map)
         self.map.fit_bounds(self.map.get_bounds()) # Centrar el zoom del mapa 
         return route_folium
 
-    def add_markers(self,):
+    def add_markers(self):
         # Añade marcadores a las entidades " estaticas" (las que no se muevan)
         for port in self.ports:
             name =self.ports[port]["name"]
@@ -102,7 +110,6 @@ class Visual():
 
     def add_feature(self,info):
         # Necesario este objeto para usar TimestampedGeoJSON
-
         feature= [{
             "type": "Feature",
             "geometry": {
@@ -111,10 +118,10 @@ class Visual():
         },
             "properties": {
             "times": self.time,
-        
             "style": {
-            "color": "blue",
-            "weight": 5,
+            "color": "red",
+            "weight": 0,
+            
         },
         },
         }]
@@ -123,46 +130,42 @@ class Visual():
 
     def run(self):
         self.add_markers()
-
         # Este plugin se encarga de mover el barco!
         # hay que darle las features del proyecto que se
         # inicializan con la funcion add_feature
+
+        feat = self.features[0] +self.features[1]+self.features[2] + self.features[3]
+        
         plugins.TimestampedGeoJson(
             {
                 "type": "FeatureCollection",
-                "features": self.features[0]
+                # "features": self.features[0] +self.features[1]
+                "features": feat
             },
-            period="PT1M",
+            period="P1D",
             auto_play=False,
-  
+            loop=False,
             # add_last_point=True,
-        ).add_to(m)
+        ).add_to(self.map)
         
         
         
     def save_map(self):
-        self.map.save("test.html")
+        self.map.save(f"{self.simulation_name}.html")
 
-# Creamos el mapa
-m = folium.Map()
+def create_simulation(ships,ports,routes,time,simulation_name):
+    tile_1 = "OpenStreetMap"
+    m = folium.Map(tiles=tile_1,        prefer_canvas=True)
 
-# Cargamos los datos
+    visual = Visual(m)
+    for port in ports:
+        visual.add_port(ports[port])
+    for route in routes:
+        visual.add_route(routes[route])
+    for ship in ships:
+        visual.add_ship(ships[ship])
+    visual.simulation_name = simulation_name
+    visual.add_time(time)
+    visual.run()
+    visual.save_map()
 
-path = "visual/input.txt"
-ships,ports,routes = load_simulation(path)
-
-
-# Creamos la clase 
-visual = Visual(m)
-
-# Añadimos los agentes o entidades
-for port in ports:
-    visual.add_port(ports[port])
-for route in routes:
-    visual.add_route(routes[route])
-for ship in ships:
-    visual.add_ship(ships[ship])
-
-visual.add_time(11)
-visual.run()
-visual.save_map()
