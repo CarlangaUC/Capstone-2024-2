@@ -148,8 +148,12 @@ se obtienen los agentes y se ejecuta la visualización con la funcción create_s
 ### Ejecución 📋
 
 
+Para ejecutar la simulación se debe acceder especificamente al archivo [main.py](main.py), en el cual se debera tener en consideración lo siguiente:
 
+- **Hyperparametros** : Estos deberan ser escogidos de acuerdo a lo necesitado, lo unico manual a cambiar es el **n_ports** (numero de puertos), los cuales influirian en la cantidad de barcos generados como fue explicado en **Input Automático** y el **t_simulacion** (tiempo de simulación), que indicara la cantidad de tiempo hasta cual la simulación se ejecutara al ser una simulacion discreta.
 
+- **Tiempo** : La simulación correra hasta cierto tiempo dependiendo de lo especificado, pero ademas, para simular el tiempo mas adecuado entre eventos, se plantea el parametro **sleep_time** de simpy el cual permite retrasar el tiempo entre cada tiempo como tal, de esta manera permitiendo leer el output de manera mas ordenado, se recomienda con sleep_time del orden de 10^-3 para mayor lectura.
+ 
 
 
 

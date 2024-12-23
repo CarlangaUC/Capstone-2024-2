@@ -13,9 +13,10 @@ manager = Manager()
 n_ports = 2
 manager.add(n_ports=n_ports)
 
+t_simulacion = 2000
 
 manager.processes()
-manager.step_run(2000,sleep_time=0)
+manager.step_run(t_simulacion,sleep_time=0)
 
 
 # RUTAS NO TIENE EL ATRIBUTO DE CAPACITY ??? PORQUEE

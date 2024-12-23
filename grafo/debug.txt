@@ -1,37 +1,43 @@
-BARCOS GENERADOS:28
+BARCOS GENERADOS:34
 RUTAS GENERADOS: 2
 BARCOS
-Nombre: Barco 0, Velocidad: 44, ID del Puerto: 1, Ciclos: True, Recarga: 10, Itinerario: [0, 1, 0, 1, 0, 1]
-Nombre: Barco 1, Velocidad: 44, ID del Puerto: 0, Ciclos: True, Recarga: 19, Itinerario: [1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0]
-Nombre: Barco 2, Velocidad: 70, ID del Puerto: 1, Ciclos: False, Recarga: 13, Itinerario: [0, 1, 0, 1, 0, 1]
-Nombre: Barco 3, Velocidad: 33, ID del Puerto: 0, Ciclos: True, Recarga: 19, Itinerario: [1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0]
-Nombre: Barco 4, Velocidad: 49, ID del Puerto: 0, Ciclos: True, Recarga: 18, Itinerario: [1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0]
-Nombre: Barco 5, Velocidad: 45, ID del Puerto: 1, Ciclos: True, Recarga: 18, Itinerario: [0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1]
-Nombre: Barco 6, Velocidad: 87, ID del Puerto: 1, Ciclos: False, Recarga: 21, Itinerario: [0, 1]
-Nombre: Barco 7, Velocidad: 47, ID del Puerto: 0, Ciclos: True, Recarga: 8, Itinerario: [1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0]
-Nombre: Barco 8, Velocidad: 34, ID del Puerto: 0, Ciclos: False, Recarga: 11, Itinerario: [1, 0, 1, 0]
-Nombre: Barco 9, Velocidad: 38, ID del Puerto: 1, Ciclos: True, Recarga: 10, Itinerario: [0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1]
-Nombre: Barco 10, Velocidad: 33, ID del Puerto: 1, Ciclos: False, Recarga: 5, Itinerario: [0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1]
-Nombre: Barco 11, Velocidad: 46, ID del Puerto: 0, Ciclos: True, Recarga: 26, Itinerario: [1, 0, 1, 0, 1, 0, 1, 0, 1, 0]
-Nombre: Barco 12, Velocidad: 91, ID del Puerto: 0, Ciclos: False, Recarga: 25, Itinerario: [1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1]
-Nombre: Barco 13, Velocidad: 47, ID del Puerto: 1, Ciclos: False, Recarga: 22, Itinerario: [0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0]
-Nombre: Barco 14, Velocidad: 50, ID del Puerto: 0, Ciclos: False, Recarga: 14, Itinerario: [1, 0, 1, 0, 1, 0]
-Nombre: Barco 15, Velocidad: 38, ID del Puerto: 0, Ciclos: False, Recarga: 19, Itinerario: [1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1]
-Nombre: Barco 16, Velocidad: 69, ID del Puerto: 0, Ciclos: False, Recarga: 20, Itinerario: [1, 0, 1]
-Nombre: Barco 17, Velocidad: 43, ID del Puerto: 0, Ciclos: False, Recarga: 15, Itinerario: [1, 0]
-Nombre: Barco 18, Velocidad: 89, ID del Puerto: 0, Ciclos: True, Recarga: 14, Itinerario: [1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0]
-Nombre: Barco 19, Velocidad: 91, ID del Puerto: 1, Ciclos: False, Recarga: 14, Itinerario: [0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1]
-Nombre: Barco 20, Velocidad: 95, ID del Puerto: 1, Ciclos: True, Recarga: 18, Itinerario: [0, 1, 0, 1, 0, 1, 0, 1, 0, 1]
-Nombre: Barco 21, Velocidad: 35, ID del Puerto: 1, Ciclos: False, Recarga: 13, Itinerario: [0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0]
-Nombre: Barco 22, Velocidad: 38, ID del Puerto: 0, Ciclos: False, Recarga: 5, Itinerario: [1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1]
-Nombre: Barco 23, Velocidad: 88, ID del Puerto: 0, Ciclos: False, Recarga: 9, Itinerario: [1, 0, 1, 0, 1, 0, 1, 0]
-Nombre: Barco 24, Velocidad: 36, ID del Puerto: 1, Ciclos: False, Recarga: 14, Itinerario: [0, 1]
-Nombre: Barco 25, Velocidad: 43, ID del Puerto: 0, Ciclos: True, Recarga: 29, Itinerario: [1, 0, 1, 0, 1, 0, 1, 0]
-Nombre: Barco 26, Velocidad: 57, ID del Puerto: 1, Ciclos: False, Recarga: 15, Itinerario: [0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1]
-Nombre: Barco 27, Velocidad: 94, ID del Puerto: 0, Ciclos: True, Recarga: 21, Itinerario: [1, 0, 1, 0]
+Nombre: Barco 0, Velocidad: 70, ID del Puerto: 1, Ciclos: False, Recarga: 13, Itinerario: [0, 1, 0, 1, 0, 1, 0, 1]
+Nombre: Barco 1, Velocidad: 56, ID del Puerto: 1, Ciclos: True, Recarga: 23, Itinerario: [0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1]
+Nombre: Barco 2, Velocidad: 76, ID del Puerto: 1, Ciclos: True, Recarga: 14, Itinerario: [0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1]
+Nombre: Barco 3, Velocidad: 56, ID del Puerto: 0, Ciclos: True, Recarga: 25, Itinerario: [1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0]
+Nombre: Barco 4, Velocidad: 30, ID del Puerto: 1, Ciclos: False, Recarga: 19, Itinerario: [0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1]
+Nombre: Barco 5, Velocidad: 66, ID del Puerto: 1, Ciclos: True, Recarga: 18, Itinerario: [0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1]
+Nombre: Barco 6, Velocidad: 81, ID del Puerto: 1, Ciclos: True, Recarga: 10, Itinerario: [0, 1, 0, 1]
+Nombre: Barco 7, Velocidad: 83, ID del Puerto: 0, Ciclos: True, Recarga: 3, Itinerario: [1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0]
+Nombre: Barco 8, Velocidad: 81, ID del Puerto: 1, Ciclos: True, Recarga: 10, Itinerario: [0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1]
+Nombre: Barco 9, Velocidad: 85, ID del Puerto: 1, Ciclos: True, Recarga: 20, Itinerario: [0, 1, 0, 1, 0, 1, 0, 1]
+Nombre: Barco 10, Velocidad: 83, ID del Puerto: 0, Ciclos: True, Recarga: 19, Itinerario: [1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0]
+Nombre: Barco 11, Velocidad: 95, ID del Puerto: 1, Ciclos: True, Recarga: 16, Itinerario: [0, 1]
+Nombre: Barco 12, Velocidad: 86, ID del Puerto: 1, Ciclos: False, Recarga: 21, Itinerario: [0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1]
+Nombre: Barco 13, Velocidad: 46, ID del Puerto: 0, Ciclos: True, Recarga: 22, Itinerario: [1, 0, 1, 0, 1, 0, 1, 0, 1, 0]
+Nombre: Barco 14, Velocidad: 47, ID del Puerto: 1, Ciclos: True, Recarga: 16, Itinerario: [0, 1, 0, 1, 0, 1, 0, 1, 0, 1]
+Nombre: Barco 15, Velocidad: 84, ID del Puerto: 1, Ciclos: False, Recarga: 12, Itinerario: [0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1]
+Nombre: Barco 16, Velocidad: 66, ID del Puerto: 0, Ciclos: False, Recarga: 2, Itinerario: [1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0]
+Nombre: Barco 17, Velocidad: 68, ID del Puerto: 1, Ciclos: True, Recarga: 10, Itinerario: [0, 1, 0, 1, 0, 1, 0, 1, 0, 1]
+Nombre: Barco 18, Velocidad: 43, ID del Puerto: 1, Ciclos: True, Recarga: 18, Itinerario: [0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1]
+Nombre: Barco 19, Velocidad: 45, ID del Puerto: 0, Ciclos: True, Recarga: 24, Itinerario: [1, 0, 1, 0, 1, 0, 1, 0]
+Nombre: Barco 20, Velocidad: 51, ID del Puerto: 0, Ciclos: False, Recarga: 21, Itinerario: [1, 0, 1, 0, 1, 0]
+Nombre: Barco 21, Velocidad: 75, ID del Puerto: 1, Ciclos: False, Recarga: 18, Itinerario: [0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0]
+Nombre: Barco 22, Velocidad: 98, ID del Puerto: 0, Ciclos: False, Recarga: 22, Itinerario: [1, 0]
+Nombre: Barco 23, Velocidad: 57, ID del Puerto: 1, Ciclos: False, Recarga: 21, Itinerario: [0, 1, 0, 1, 0]
+Nombre: Barco 24, Velocidad: 96, ID del Puerto: 0, Ciclos: True, Recarga: 8, Itinerario: [1, 0, 1, 0]
+Nombre: Barco 25, Velocidad: 67, ID del Puerto: 1, Ciclos: False, Recarga: 26, Itinerario: [0, 1, 0, 1, 0, 1]
+Nombre: Barco 26, Velocidad: 80, ID del Puerto: 0, Ciclos: False, Recarga: 20, Itinerario: [1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0]
+Nombre: Barco 27, Velocidad: 88, ID del Puerto: 1, Ciclos: True, Recarga: 12, Itinerario: [0, 1, 0, 1]
+Nombre: Barco 28, Velocidad: 84, ID del Puerto: 0, Ciclos: False, Recarga: 16, Itinerario: [1, 0, 1, 0, 1, 0, 1, 0, 1]
+Nombre: Barco 29, Velocidad: 60, ID del Puerto: 1, Ciclos: True, Recarga: 6, Itinerario: [0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1]
+Nombre: Barco 30, Velocidad: 77, ID del Puerto: 1, Ciclos: False, Recarga: 19, Itinerario: [0, 1, 0, 1, 0, 1, 0]
+Nombre: Barco 31, Velocidad: 76, ID del Puerto: 1, Ciclos: False, Recarga: 23, Itinerario: [0, 1, 0, 1]
+Nombre: Barco 32, Velocidad: 83, ID del Puerto: 0, Ciclos: True, Recarga: 17, Itinerario: [1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0]
+Nombre: Barco 33, Velocidad: 56, ID del Puerto: 0, Ciclos: True, Recarga: 9, Itinerario: [1, 0, 1, 0, 1, 0, 1, 0, 1, 0]
 RUTAS
-Puerto Inicial: 1, Puerto Final: 0, Distancia: 11981.175101116401, Clima: 89, Seguridad: 5, Regulaciones: 24
-Puerto Inicial: 0, Puerto Final: 1, Distancia: 11981.175101116401, Clima: 28, Seguridad: 15, Regulaciones: 50
+Puerto Inicial: 1, Puerto Final: 0, Distancia: 16761.10571092809, Clima: 70, Seguridad: 61, Regulaciones: 53
+Puerto Inicial: 0, Puerto Final: 1, Distancia: 16761.10571092809, Clima: 98, Seguridad: 29, Regulaciones: 80
 Puertos
-Puerto: Puerto 0; Capacidad: 47, port:0
-Puerto: Puerto 1; Capacidad: 1, port:1
+Puerto: Puerto 0; Capacidad: 39, port:0
+Puerto: Puerto 1; Capacidad: 25, port:1
