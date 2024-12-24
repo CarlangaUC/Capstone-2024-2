@@ -24,6 +24,56 @@
 
 Este proyecto emplea como base para la modelación del comercio marítimo internacional los paradigmas de simulación basada en agentes y de simulación de eventos discretos. Se diseñaron tres clases para representar los barcos, puertos y rutas, que son los agentes clave en el modelo. Para la SED se utilizó la librería SimPy. Gracias a esto la simulación permite representar cada barco, puerto y ruta como agentes con comportamientos y características definidas, que interactúan en un entorno dinámico modelado en intervalos de tiempo discretos. La simulación incluye eventos clave como el movimiento de los barcos entre los distintos puertos, además del cierre y apertura temporal de puertos y de rutas, con las respectivas consecuencias que generan en el sistema.
 
+### Clases
+El archivo [agentes.py](clases/agentes.py) contiene las clases de los tres agentes principales de la simulación, listadas a continuación:
+- Ship: clase encargada de representar a un barco. Los siguientes atributos y métodos son los más importantes.
+    - env: referencia al Enviroment de SimPy.
+    - speed_: float que representa la velocidad base del barco.
+    - port_id: id del puerto actual donde se encuentra el barco.
+    - ship_id: id único para cada barco.
+    - load: int representando la carga del barco.
+    - pos: float que representa la posición del barco en la ruta actual.
+    - cycles: valor booleano que determina si el itinerario del barco es cíclico o no.
+    - route_id: id de la ruta en la cual se encuentra el barco.
+    - recharge_: tiempo base que demora el barco en descargar.
+    - itinerary: itinerario del barco.
+    - recharge(): property que retorna el tiempo de descarga del barco según la distribución usada.
+    - speed(): property que retorna el valor de la velocidad.
+    - drive(): función que se encarga de mover el barco de un puerto a otro.
+
+- Port: clase encargada de representar un puerto. Los siguientes atributos son los mas importantes.
+    - env: referencia al Enviroment de SimPy.
+    - capacity: capacidad del puerto.
+    - port_id: id único para cada puerto.
+    - ships: lista de barcos en el puerto.
+    - open: booleano que indica si el puerto está abierto o no.
+    - resource: recurso de SimPy que controla el acceso al puerto.
+
+- Route: clase encargada de representar una ruta. Los siguientes atributos son los más importantes.
+    - env: referencia al Enviroment de SimPy.
+    - initial_port_id: id del puerto inicial de la ruta.
+    - final_port_id: id del puerto final de la ruta.
+    - dist: largo de la ruta.
+    - route_id: id único para cada ruta.
+    - ships: lista de barcos en la ruta.
+    - resource: recurso de SimPy que controla el acceso a la ruta.
+    - open: booleano que indica si la ruta está abierta o no.
+
+### Manager
+El archivo [manager.py](clases/manager.py) contiene la clase Manager, que se encarga de generar una simulación particular. Los siguientes atributos y métodos son los más importantes.
+- env: referencia al Enviroment de SimPy.
+- ships: diccionario donde las llaves son los id's de los barcos y los valores sus instancias asociadas.
+- ports: diccionario donde las llaves son los id's de los puertos y los valores sus instancias asociadas.
+- routes: diccionario donde las llaves son los id's de las rutas y los valores sus instancias asociadas.
+- search_route(): método que se encarga de encontrar una ruta entre dos puertos.
+- ship_event_loop(): método que se encarga de llevar a cabo el itinerario de un barco en particular.
+- processes(): método que añade el ship_event_loop de cada barco como un proceso.
+- run(): método que corre la simulación por un tiempo determinado.
+- step_run(): método que corre la simulación esperando un tiempo determinado entre cada intervalo.
+
+El siguiente diagrama de clases indica la relación entre todas las clases:
+![image](diagrama.png)
+
 ### Input Automático ⚙️
 
 En el archivo [input_auto.py](clases/input_auto.py) se generan aleatoriamente los agentes de la simulación a partir de un número de puertos como input. Se usaron distribuciones uniformes por simplicidad, siempre pensando en que esto puede ser modificado dependiendo del propósito de la empresa. El funcionamiento es el siguiente:
