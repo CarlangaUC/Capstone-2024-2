@@ -26,75 +26,49 @@ Este proyecto emplea como base para la modelación del comercio marítimo intern
 
 ### Input Automático ⚙️
 
-En el archivo [input_auto.py](clases/input_auto.py) se generan aleatoriamente los agentes de la simulación a partir de un número de puertos como input. Las distribuciones que se usaron para la aleatoriedad son uniformes por simplicidad, siempre pensando en que puede ser esto modificado dependiendo del propósito de la empresa. El funcionamiento es el siguiente:
+En el archivo [input_auto.py](clases/input_auto.py) se generan aleatoriamente los agentes de la simulación a partir de un número de puertos como input. Se usaron distribuciones uniformes por simplicidad, siempre pensando en que esto puede ser modificado dependiendo del propósito de la empresa. El funcionamiento es el siguiente:
 
-- generate_agents: Función que se encarga de generar todos los agentes
-llamando a otras funciones y finalmente retorna diccionarios con instancias
-de las clases (clases definidas en [agentes.py](/grafo/clases/agentes.py)) más
-una matriz de adyacencia de las distancias entre rutas 
-    - El numero de barcos generados se escoge aleatoriamente entre 1 y 
-    la capacidad maxima global que pueden almacenar los puertos 
-    - También posee un argumento debug el cual por defecto esta en falso
-    si lo ponemos en True se generara un archivo debug.txt el cual retorna
-    la información de todas las entidades generadas
+- generate_agents: Función que se encarga de generar todos los agentes llamando a otras funciones y finalmente retorna diccionarios con instancias de las clases (clases definidas en [agentes.py](clases/agentes.py)) más una matriz de adyacencia de las distancias entre rutas .
+    - El número de barcos generados se escoge aleatoriamente entre 1 y la capacidad máxima global que pueden almacenar los puertos.
+    - También posee un argumento debug el cual por defecto es False. Si se le entrega True se generará un archivo debug.txt el cual retorna la información de todas las entidades generadas.
 
-- gen_ports: Dado un número de puertos genera un diccionario con los puertos 
-aleatorios de la clase [Port](/grafo/clases/agentes.py#L78), además retorna la
-suma de todas las capacidades de los puertos
-    - La capacidad maxima de un puerto individual es un numero aleatorio entre 1 y 50
+- gen_ports: Dado un número de puertos genera un diccionario con los puertos aleatorios de la clase [Port](clases/agentes.py#L78), además retorna la suma de todas las capacidades de los puertos.
+    - La capacidad máxima de un puerto individual es un numero aleatorio entre 1 y 50.
 
-- all_routes: Recibe el número de puertos que se quieren generar, retorna una lista
-con todas las tuplas que representen rutas posibles en la simulación.
-    - Podrian existir más rutas de las que generamos, eso es algo que se 
-    puede generalizar a partir de nuestro codigo
+- all_routes: Recibe el número de puertos que se quieren generar, retorna una lista con todas las tuplas que representen rutas posibles en la simulación.
+    - Podrían existir más rutas de las que se generan, eso es algo que se puede generalizar a partir del código.
 
-- gen_ships: Dado un número de barcos (escogido en generate_agents), un numero de puertos y una lista con todas las rutas posibles entre puertos se genera un diccionario
-con los barcos aleatorios de la clase [Ship](/grafo/clases/agentes.py#L5),
-se asume un id secuencial (0,1,...,num_ships-1), la carga y la velocidad
-se generan con ciertas funciones basadas en distribuciones uniformes (ver el punto Otros)
-además se genera el itinerario con la función gen_itinerary y retorna el diccionario con los barcos y las rutas usadas por los barcos.
-    - Acá asumimos que solo van a existir las rutas que se escogieron al azar
+- gen_ships: Dado un número de barcos (escogido en generate_agents), un número de puertos y una lista con todas las rutas posibles entre puertos se genera un diccionario con los barcos aleatorios de la clase [Ship](clases/agentes.py#L5). Se asume un id secuencial (0,1,...,num_ships-1), la carga y la velocidad se generan con ciertas funciones basadas en distribuciones uniformes (ver el punto Otros). Además se genera el itinerario con la función gen_itinerary y retorna el diccionario con los barcos y las rutas usadas por los barcos.
+    - Acá se asume que solo van a existir las rutas que se escogieron al azar
     es claro que también uno poddria considerar más rutas, se puede genralizar.
 
-- gen_itinerary: Recibe un numero aleatorio de las tareas que debe realizar el
-barco (generado en gen_ships), id del puerto inicial,si es ciclico el barco y un set de las rutas que
-ya se han utilizado, a partir del id inciial se genera aleatoreamente el id del 
-siguiente puerto destino y se agrega al itinerario hasta llenar el itinerario.
+- gen_itinerary: Recibe un número aleatorio de las tareas que debe realizar el barco (generado en gen_ships), id del puerto inicial, si es cíclico el barco y un set de las rutas que ya se han utilizado, a partir del id inciial se genera aleatoriamente el id del siguiente puerto destino y se agrega al itinerario hasta llenar el itinerario.
 
-- gen_route: Recibe las rutas que se usaron,  itera por estas rutas y genera su información
-la distancia se genera escogiendo puntos aleatorios en la tierra (latitudes, longuitudes aleatorias)
-y calculando su distancia con la función gen_dist
+- gen_route: Recibe las rutas que se usaron, itera por estas rutas y genera su información. La distancia se genera escogiendo puntos aleatorios en la tierra (latitudes, longitudes aleatorias)y calculando su distancia con la función gen_dist.
 
-- gen_random_point: Genera una latitud y longuitud aleatoria
+- gen_random_point: Genera una latitud y longitud aleatoria.
 
-- gen_dist: recibe el id inicial y final de una ruta, mas los puntos ya generados a las distintos
-puertos, se verifica no volver a generar un punto aleatorio a un puerto que ya se le habia genrado uno
-retorna la distancia geodesica utilizando la libreria geopy
-    - Hay muchas otras formas de calcular la distancia, se puede generalizar dependiendo del proposito.
+- gen_dist: Recibe el id inicial y final de una ruta, más los puntos ya generados a los distintos
+puertos, se verifica no volver a generar un punto aleatorio a un puerto que ya se le habia generado uno. Retorna la distancia geodésica utilizando la libreria geopy.
+    - Hay muchas otras formas de calcular la distancia, se puede generalizar dependiendo del propósito.
 
-- gen_matrix: Dado el numero de puertos y clases de rutas se genera la matriz de adyacencia de la simulacion
-la cual tendra las distancias de las rutas
+- gen_matrix: Dado el número de puertos y clases de rutas se genera la matriz de adyacencia de la simulación la cual tendra las distancias de las rutas.
 
-- Otros: También hay otras funciones como [gen_velocity](/grafo/clases/input_auto.py#L257) las cuales están pensadas para agregar mayor dinamica o funcionamineto
-al código, se ubican al final del código del archivo.
+- Otros: También hay otras funciones como [gen_velocity](/grafo/clases/input_auto.py#L257) cuyo propósito es agregar mayor dinámica o funcionamiento al código. Estas se ubican al final del código del archivo.
 
 ### Visualización 🗺️
 
 ![](/visual/simulation.gif)
 
-En la carpeta [visual](/visual) se encuentran todas los archivos 
-correspondientes al apartado visual de esta simulación
+En la carpeta [visual](/visual) se encuentran todas los archivos correspondientes al apartado visual de la simulación.
 
-**Consideraciones**: No esta integrada la visualización del todo con la simulación creada en este proyecto, la visualización esta basada en el output que retorna nuestra simulación,
-esto se puede generalizar, la idea de la visualización es dar un primer paso para que la empresa pueda crear una visualización del apartado maritimo
-si así lo desean adaptando el output de la simulación que ellos generen y escalando el codigo de la visualización.
+**Consideraciones**: La visualización está basada en el output que retorna la simulación. Esto se puede generalizar, ya que la idea es dar un primer paso para que adaptando el output de la simulación final se pueda llegar a una visualización similar y adaptable a distintos escenarios. Es por esto que la visualización no está completamente integrada a la simulación.
 
 Funcionamiento de la visualización: Se compone principalmente de 3 archivos
 
-- [input_visual.py](/visual/input_visual.py): En este archivo se encuentra la función [load_simulation](/visual/input_visual.py#L1) que carga
-un archivo.txt, el archivo.txt que maneja tiene el siguiente formato
-    - Se ha implementado el movimineto de los barcos, la función load_simulation es independiente
-    de t, las lineas que contienen t son para mejor entendimiento del input.
+- [input_visual.py](/visual/input_visual.py): En este archivo se encuentra la función [load_simulation](/visual/input_visual.py#L1) que carga un archivo.txt, el archivo.txt que maneja tiene el siguiente formato
+    - Se ha implementado el movimiento de los barcos, la función load_simulation es independiente
+    de t, las líneas que contienen t son para mejor entendimiento del input.
 
 ```
 t=0
@@ -110,38 +84,26 @@ ship;nombre;posicion en tiempo t;puerto inicial;puerto final;ID_Barco;ID_ruta
     - [Visual](/visual/visual.py#L6): Clase la cual se encarga de manejar todo el aspecto visual 
     con las librerias [folium](https://python-visualization.github.io/folium/latest/) y [searoute](https://pypi.org/project/searoute/), los metodos principales de esta clase son:
          
-        - [get_shortest_path](/visual/visual.py#L118): En esta función se utiliza la libreria de searoute, en particular la función searoute la cual recibe las coordenadas de dos puntos de la tierra y retorna una objeto especial con la informacion de la ruta mas corta maritima del cual extraemos una lista de las coordenadas de esta ruta, además añadimos
-        al mapa (esta en el atributo self.map, objeto de folium) una interpolación de esta ruta
+        - [get_shortest_path](/visual/visual.py#L118): En esta función se utiliza la librería de searoute, en particular la función searoute la cual recibe las coordenadas de dos puntos de la tierra y retorna una objeto especial con la informacion de la ruta mas corta marítima del cual extraemos una lista de las coordenadas de esta ruta, además añadimos al mapa (está en el atributo self.map, objeto de folium) una interpolación de esta ruta.
         
-        - [add_feature](/visual/visual.py#L186): recibe la infromacion de un objeto que tenga
-        movimiento y lo agrega a la lista self.features, se podrian agregar mas entidades
-        con movimiento usando esta función, para este proyecto solamente maneja el movimiento de los barcos
+        - [add_feature](/visual/visual.py#L186): recibe la información de un objeto que tenga movimiento y lo agrega a la lista self.features, se podrian agregar mas entidades con movimiento usando esta función, para este proyecto solamente maneja el movimiento de los barcos.
         
-        - [run](/visual/visual.py#L220): En esta función se añaden los marcadores (los iconos
-        de los puertos en este proyecto) con la función self.add_markers, además se utiliza el
-        plugin de folium TimestampedGeoJson el cual es el encargado de manejar el movimiento de 
-        los barcos en la visualización.
+        - [run](/visual/visual.py#L220): En esta función se añaden los marcadores (los íconos de los puertos en este proyecto) con la función self.add_markers, además se utiliza el plugin de folium TimestampedGeoJson el cual es el encargado de manejar el movimiento de los barcos en la visualización.
 
-    - [create_simulation](/visual/visual.py#L260): Recibe diccionarios con la informacion de los
-    el tiempo de la simulación (cuantos intervalos se van a realizar), tipo de mapa, y
-    una ruta de donde se guardara el archivo .html. En esta función se crea la instancia
-    Map de folium, la cual es la que posee el mapa que se vera en la visualización, 
-    inicializamos la clase Visual, añadimos la información de los agentes a la clase
-    y luego ejecutamos metodos de la clase para hacer que todo funcione y retornar la output .html.
+    - [create_simulation](/visual/visual.py#L260): Recibe diccionarios con la información de los el tiempo de la simulación (cuántos intervalos se van a realizar), tipo de mapa, y  una ruta de donde se guardará el archivo .html. En esta función se crea la instancia Map de folium, la cual es la que posee el mapa que se verá en la visualización, inicializamos la clase Visual, añadimos la información de los agentes a la clase y luego ejecutamos métodos de la clase para hacer que todo funcione y retornar la output .html.
 
 
-- [run.py](/visual/run.py): En este archivo se ejecuta la visualización, se crean los parametros,
-se obtienen los agentes y se ejecuta la visualización con la funcción create_simulation.
+- [run.py](/visual/run.py): En este archivo se ejecuta la visualización, se crean los parámetros,se obtienen los agentes y se ejecuta la visualización con la función create_simulation.
 
 
 ### Ejecución 📋
 
 
-Para ejecutar la simulación se debe acceder especificamente al archivo [main.py](main.py), en el cual se debera tener en consideración lo siguiente:
+Para ejecutar la simulación se debe ejecutar el archivo [main.py](main.py), en el cual se deberá tener en consideración lo siguiente:
 
-- **Hyperparametros** : Estos deberan ser escogidos de acuerdo a lo necesitado, lo unico manual a cambiar es el **n_ports** (numero de puertos), los cuales influirian en la cantidad de barcos generados como fue explicado en **Input Automático** y el **t_simulacion** (tiempo de simulación), que indicara la cantidad de tiempo hasta cual la simulación se ejecutara al ser una simulacion discreta.
+- **Hiperparámetros** : Estos deberan ser escogidos de acuerdo a lo necesitado, lo ínico manual a cambiar es el **n_ports** (número de puertos), los cuales influirían en la cantidad de barcos generados como fue explicado en **Input Automático** y el **t_simulacion** (tiempo de simulación), que indicará la cantidad de tiempo hasta cual la simulación se ejecutará al ser una simulacion discreta.
 
-- **Tiempo** : La simulación correra hasta cierto tiempo dependiendo de lo especificado, pero ademas, para simular el tiempo mas adecuado entre eventos, se plantea el parametro **sleep_time** de simpy el cual permite retrasar el tiempo entre cada tiempo como tal, de esta manera permitiendo leer el output de manera mas ordenado, se recomienda con sleep_time del orden de 10^-3 para mayor lectura.
+- **Tiempo** : La simulación correrá hasta cierto tiempo dependiendo de lo especificado, pero además, para simular el tiempo más adecuado entre eventos, se plantea el parámetro **sleep_time** de simpy el cual permite retrasar el tiempo entre cada intervalo como tal, de esta manera permitiendo leer el output de manera mas ordenado, se recomienda con sleep_time del orden de 10^-3 para mejor lectura.
  
 
 
