@@ -125,6 +125,8 @@ class Manager:
 
     def step_run(self, until, sleep_time):
         while self.env.now < until:
+            if not self.env._queue:  
+                break
             self.env.step()
             time.sleep(sleep_time)
 
