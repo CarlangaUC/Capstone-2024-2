@@ -7,7 +7,7 @@
 - main.py : instrucciones, parametros. | Carlos
 - visual.py : explicar visualizacion actual, instrucciones. | Basti
 
-# Simulacion Maritima 
+# Simulación Marítima 
 
 **Integrantes del equipo**:
 
@@ -18,26 +18,15 @@
 - **Bastián Cortés**
 
 
-**Descripción**: El siguiente repo contiene instrucciones y documentacion en torno a la solución planteada por el equipo en torno a la problematica de tener un simulador maritimo, para esto fue documentado los archivos necesarios en conjunto a todo lo necesario para entender el como se corre el codigo y su funcionamiento.
+**Descripción**: El siguiente repositorio contiene las instrucciones y documentación de la solución planteada por el equipo en torno a la problemática de un simulador marítimo. Para esto se incluye todo lo necesario para entender cómo se corre el código y su funcionamiento.
 
 ## Contexto
 
-Este proyecto emplea como base para la modelación del comercio marítimo internacional tanto el paradigma de simulación basada en agentes
-como el paradigma de simulación de eventos discretos. Hemos diseñado tres clases diferentes para crear los barcos, puertos y rutas, que
-son los agentes clave en el modelo, y hemos utilizado SimPy, que es una librería de Python que nos permitió simular eventos en tiempo
-discreto. Con esta librería creamos una simulación del comercio marítimo internacional con un enfoque que permite representar cada 
-barco, puerto y ruta como agentes con comportamientos y características definidas, que interactúan en un entorno dinámico. La simulación
-captura eventos clave del comercio marítimo como el movimiento de los barcos entre los distintos puertos, además del cierre y apertura 
-temporal de puertos y de rutas, con las respectivas consecuencias que generan dichos eventos en el sistema.
+Este proyecto emplea como base para la modelación del comercio marítimo internacional los paradigmas de simulación basada en agentes y de simulación de eventos discretos. Se diseñaron tres clases para representar los barcos, puertos y rutas, que son los agentes clave en el modelo. Para la SED se utilizó la librería SimPy. Gracias a esto la simulación permite representar cada barco, puerto y ruta como agentes con comportamientos y características definidas, que interactúan en un entorno dinámico modelado en intervalos de tiempo discretos. La simulación incluye eventos clave como el movimiento de los barcos entre los distintos puertos, además del cierre y apertura temporal de puertos y de rutas, con las respectivas consecuencias que generan en el sistema.
 
 ### Input Automático ⚙️
 
-En el archivo [input_auto.py](clases/input_auto.py) se generan 
-aleatoreamente los agentes de la simulación a partir de un numero 
-de puertos como input, las distribuciones que se usaron para la 
-aleatoriedad fueron uniformes por simplicidad, siempre
-pensando en que puede ser esto modificado dependiendo del proposito
-de la empresa. El funcionamiento es el siguiente:
+En el archivo [input_auto.py](clases/input_auto.py) se generan aleatoriamente los agentes de la simulación a partir de un número de puertos como input. Las distribuciones que se usaron para la aleatoriedad son uniformes por simplicidad, siempre pensando en que puede ser esto modificado dependiendo del propósito de la empresa. El funcionamiento es el siguiente:
 
 - generate_agents: Función que se encarga de generar todos los agentes
 llamando a otras funciones y finalmente retorna diccionarios con instancias
