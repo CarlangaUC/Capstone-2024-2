@@ -1,86 +1,80 @@
 import simpy
-import math
+import random
 
-# La idea de este modelo simple es simular tres puertos con barcos, donde
-# cada barco tiene puertos de origen y destino a los que va de ida y vuelta.
-# La idea es simular tanto el viaje entre puertos como procesos de carga y
-# descarga. Otra idea es la de simular capacidad de los puertos (lo cual
-# está también en el archivo main)
 
-# Cree esta función de distancia euclidiana entre puertos
-def distancia(puerto_origen, puerto_destino):
-    x1, y1 = puerto_origen.coordenadas
-    x2, y2 = puerto_destino.coordenadas
-    return math.sqrt((x2 - x1)**2 + (y2 - y1)**2)
-
-# Aquí definí clases de Puerto y Barco
 class Puerto:
-    def __init__(self, nombre, coordenadas, capacidad_maxima):
-        self.nombre = nombre
-        self.coordenadas = coordenadas
-        self.capacidad_maxima = capacidad_maxima
-        self.barcos_actuales = 0
-    
-    # Definimos estas funciones para ver si el Puerto puede o no recibir barcos
-    # Se lleva un conteo de los barcos en cada puerto
-    def puede_recibir(self):
-        return self.barcos_actuales < self.capacidad_maxima
-
-    def recibir_barco(self):
-        if self.puede_recibir():
-            self.barcos_actuales += 1
-            return True
-        else:
-            return False
-
-    def liberar_barco(self):
-        if self.barcos_actuales > 0:
-            self.barcos_actuales -= 1
-
-class Barco:
-    def __init__(self, env, nombre, puerto_origen, puerto_destino, tiempo_carga, tiempo_descarga, velocidad):
+    def __init__(self, env, nombre, num_cajeros, num_gruas, num_controladores):
         self.env = env
         self.nombre = nombre
-        self.puerto_origen = puerto_origen
+        self.cajero = simpy.Resource(env, num_cajeros)
+        self.grua = simpy.Resource(env, num_gruas)
+        self.controlador = simpy.Resource(env, num_controladores)
+
+    def gestionar_atraque(self, barco):
+        # Tiempo de llegada al puerto
+        tiempo_llegada = self.env.now
+        print(f"{barco.nombre} ha llegado para atracar en {self.nombre} a las {tiempo_llegada}")
+        
+        # Pago de tarifas portuarias
+        with self.cajero.request() as solicitud:
+            yield solicitud
+            print(f"{barco.nombre} está pagando tarifas en {self.nombre} a las {self.env.now}")
+            yield self.env.timeout(random.randint(1, 3))
+
+        # Revisión de documentación
+        with self.controlador.request() as solicitud:
+            yield solicitud
+            print(f"{barco.nombre} está en revisión de documentación en {self.nombre} a las {self.env.now}")
+            yield self.env.timeout(1)
+
+        # Carga o descarga si se requiere
+        if random.choice([True, False]):
+            with self.grua.request() as solicitud:
+                yield solicitud
+                print(f"{barco.nombre} comienza carga/descarga en {self.nombre} a las {self.env.now}")
+                yield self.env.timeout(random.randint(1, 5))
+
+
+class Ruta:
+    def __init__(self, puerto_inicio, puerto_destino, duracion):
+        self.puerto_inicio = puerto_inicio
         self.puerto_destino = puerto_destino
-        self.tiempo_carga = tiempo_carga
-        self.tiempo_descarga = tiempo_descarga
-        self.velocidad = velocidad
-        self.accion = env.process(self.viajar())
+        self.duracion = duracion
 
-    def viajar(self):
-        while True:
-            # Se carga en el puerto de origen
-            print(f'{self.nombre} está cargando en {self.puerto_origen.nombre} en t={self.env.now}')
-            yield self.env.timeout(self.tiempo_carga)
+    def viajar(self, env, barco):
+        # Simula el viaje entre el puerto de inicio y el puerto de destino
+        print(f"{barco.nombre} comienza su viaje de {self.puerto_inicio.nombre} a {self.puerto_destino.nombre} a las {env.now}")
+        yield env.timeout(self.duracion)
+        print(f"{barco.nombre} llega a {self.puerto_destino.nombre} a las {env.now}")
+        yield env.process(self.puerto_destino.gestionar_atraque(barco))
 
-            # Se ve si es que es posible recibir al barco en el puerto de destino
-            if self.puerto_destino.puede_recibir():
-                # Se viaja si es que es posible
-                distancia_a_recorrer = distancia(self.puerto_origen, self.puerto_destino)
-                tiempo_viaje = distancia_a_recorrer / self.velocidad
-                print(f'{self.nombre} está viajando de {self.puerto_origen.nombre} a {self.puerto_destino.nombre} (distancia: {distancia_a_recorrer:.2f}) en t={self.env.now}')
-                yield self.env.timeout(tiempo_viaje)
 
-                # Se descarga en el puerto de destino
-                self.puerto_destino.recibir_barco()
-                self.puerto_origen.liberar_barco()
-                print(f'{self.nombre} está descargando en {self.puerto_destino.nombre} en t={self.env.now}')
-                yield self.env.timeout(self.tiempo_descarga)
+class Barco:
+    def __init__(self, env, nombre, ruta):
+        self.env = env
+        self.nombre = nombre
+        self.ruta = ruta
 
-                # Finalmente, se invierten los papeles. Se cambia puerto de origen con el de destino (se invierten)
-                self.puerto_origen, self.puerto_destino = self.puerto_destino, self.puerto_origen
-            else:
-                # Si no se puede, se escribe un mensaje y se espera un tiempo
-                print(f'{self.nombre} no puede dirigirse a {self.puerto_destino.nombre} porque está lleno en t={self.env.now}')
-                yield self.env.timeout(1)
+    def iniciar_viaje(self):
+        # Inicia el viaje en la ruta especificada
+        yield self.env.process(self.ruta.viajar(self.env, self))
 
-# Aqui creamos la simulación
+
+def simulacion(env):
+    # Puertos
+    puerto_a = Puerto(env, "Puerto A", num_cajeros=1, num_gruas=2, num_controladores=1)
+    puerto_b = Puerto(env, "Puerto B", num_cajeros=1, num_gruas=2, num_controladores=1)
+
+    # Rutas entre puertos
+    ruta_a_b = Ruta(puerto_inicio=puerto_a, puerto_destino=puerto_b, duracion=5)
+    ruta_b_a = Ruta(puerto_inicio=puerto_b, puerto_destino=puerto_a, duracion=7)
+
+    # Barcos que viajan en rutas específicas
+    for i in range(10):
+        barco = Barco(env, f"Barco {i}", ruta_a_b if i % 2 == 0 else ruta_b_a)
+        env.process(barco.iniciar_viaje())
+
+# Simulación
 env = simpy.Environment()
-puerto_A = Puerto('A', (0, 0), capacidad_maxima=2)
-puerto_B = Puerto('B', (10, 0), capacidad_maxima=1)
-puerto_C = Puerto('C', (5, 10), capacidad_maxima=2)
-barco_1 = Barco(env, 'Barco 1', puerto_A, puerto_B, tiempo_carga=5, tiempo_descarga=3, velocidad=2)
-barco_2 = Barco(env, 'Barco 2', puerto_B, puerto_C, tiempo_carga=4, tiempo_descarga=3, velocidad=2)
-barco_3 = Barco(env, 'Barco 3', puerto_C, puerto_A, tiempo_carga=6, tiempo_descarga=2, velocidad=2)
-env.run(until=50)
+simulacion(env)
+env.run(until=20)

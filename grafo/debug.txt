@@ -1,0 +1,18 @@
+BARCOS GENERADOS:9
+RUTAS GENERADOS: 2
+BARCOS
+Nombre: Barco 0, Velocidad: 74, ID del Puerto: 1, Ciclos: True, Recarga: 22, Itinerario: [0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1]
+Nombre: Barco 1, Velocidad: 56, ID del Puerto: 0, Ciclos: False, Recarga: 20, Itinerario: [1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0]
+Nombre: Barco 2, Velocidad: 77, ID del Puerto: 0, Ciclos: False, Recarga: 16, Itinerario: [1, 0, 1, 0, 1, 0, 1, 0, 1, 0]
+Nombre: Barco 3, Velocidad: 39, ID del Puerto: 0, Ciclos: True, Recarga: 19, Itinerario: [1, 0, 1, 0, 1, 0, 1, 0]
+Nombre: Barco 4, Velocidad: 88, ID del Puerto: 0, Ciclos: True, Recarga: 18, Itinerario: [1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0]
+Nombre: Barco 5, Velocidad: 32, ID del Puerto: 0, Ciclos: False, Recarga: 18, Itinerario: [1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0]
+Nombre: Barco 6, Velocidad: 51, ID del Puerto: 0, Ciclos: False, Recarga: 6, Itinerario: [1, 0, 1, 0, 1, 0, 1, 0, 1]
+Nombre: Barco 7, Velocidad: 64, ID del Puerto: 0, Ciclos: True, Recarga: 5, Itinerario: [1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0]
+Nombre: Barco 8, Velocidad: 95, ID del Puerto: 1, Ciclos: True, Recarga: 11, Itinerario: [0, 1, 0, 1]
+RUTAS
+Puerto Inicial: 1, Puerto Final: 0, Distancia: 12166.65246120631, Clima: 26, Seguridad: 86, Regulaciones: 74
+Puerto Inicial: 0, Puerto Final: 1, Distancia: 12166.65246120631, Clima: 86, Seguridad: 87, Regulaciones: 77
+Puertos
+Puerto: Puerto 0; Capacidad: 8, port:0
+Puerto: Puerto 1; Capacidad: 22, port:1
